@@ -34,6 +34,6 @@ Example:
 
 Copyright (C) 2015 Kurt Kanzenbach <kurt@kmk-computers.de>
 
-## Licence ##
+## License ##
 
 GPL Version 3
