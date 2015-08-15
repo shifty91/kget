@@ -10,6 +10,7 @@ the same thing as BSD's fetch.
     $ get <url>
 
 Supported right now:
+
 - HTTP, HTTPS and FTP
 - IPv4 and IPv6 (v6 is preferred in DNS lookups)
 - HTTP Basic Auth
