@@ -23,7 +23,7 @@ Example:
 
     $ mkdir build
     $ cd build
-    $ cmake ../build
+    $ cmake ..
     $ make -j8
 
 ## Dependencies ##
