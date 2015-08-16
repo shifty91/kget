@@ -10,25 +10,69 @@
 #include <cstdlib>
 #include <libgen.h>
 
+#include <unistd.h>
+
+#include "config.h"
 #include "protocol_dispatcher.h"
 #include "logger.h"
 
 static inline
 void print_usage_and_die()
 {
-    std::cerr << "usage: get <url>" << std::endl;
+    std::cerr << "usage: get [options] <url>" << std::endl;
+    std::cerr << "  options:" << std::endl;
+    std::cerr << "    -p       : show progressbar if available" << std::endl;
+    std::cerr << "    -u <user>: username" << std::endl;
+    std::cerr << "    -k <pw>  : password" << std::endl;
+    std::cerr << "    -f       : do not follow HTTP redirects" << std::endl;
+    std::cerr << "get version 1.0 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     exit(-1);
 }
 
 int main(int argc, char *argv[])
 {
     // parse args
+    Config *config = Config::instance();
+    std::string url;
+    std::string user;
+    std::string pw;
+    bool show_pg = false;
+    bool dont_follow_redirects = true;
+    int c;
+
     if (argc <= 1)
         print_usage_and_die();
 
+    while ((c = getopt(argc, argv, "pfu:k:")) != -1) {
+        switch (c) {
+        case 'p':
+            show_pg = 1;
+            break;
+        case 'f':
+            dont_follow_redirects = 1;
+            break;
+        case 'u':
+            user = optarg;
+            break;
+        case 'k':
+            pw = optarg;
+            break;
+        case '?':
+            print_usage_and_die();
+        case ':':
+            print_usage_and_die();
+        }
+    }
+    if (optind >= argc)
+        print_usage_and_die();
+    url = argv[optind];
+
+    config->show_pg() = show_pg;
+    config->follow_redirects() = !dont_follow_redirects;
+
     // dispatch
     try {
-        ProtocolDispatcher dispatcher(argv[1]);
+        ProtocolDispatcher dispatcher(url, user, pw);
         dispatcher.dispatch();
     } catch (const std::exception&) {
         log_info("Unfortunately an error has occured :(. For more information read "

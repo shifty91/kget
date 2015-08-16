@@ -15,6 +15,7 @@
 #include "redirect_exception.h"
 #include "auth_exception.h"
 #include "base64.h"
+#include "config.h"
 
 namespace HTTPHelpers {
 
@@ -189,6 +190,7 @@ public:
         CONNECTION tcp;
         std::string request;
         std::vector<std::string> header;
+        Config *config = Config::instance();
 
         tcp.connect(m_host, HTTPHelpers::Service<CONNECTION>::PORT);
         request = build_http_request(user, pw);
@@ -204,7 +206,7 @@ public:
         std::ofstream ofs(fileToSave);
         if (ofs.fail())
             EXCEPTION("Failed to open file: " << fileToSave);
-        if (length > 0)
+        if (length > 0 && config->show_pg())
             tcp.read_until_eof_with_pg_to_fstream(ofs, length);
         else
             tcp.read_until_eof_to_fstream(ofs);

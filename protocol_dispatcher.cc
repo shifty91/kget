@@ -7,11 +7,14 @@
 #include "redirect_exception.h"
 #include "auth_exception.h"
 #include "utils.h"
+#include "config.h"
 
 #include "protocol_dispatcher.h"
 
 void ProtocolDispatcher::dispatch()
 {
+    Config *config = Config::instance();
+
     while (42) {
         URLParser parser(m_url);
 
@@ -41,10 +44,14 @@ void ProtocolDispatcher::dispatch()
                           " is not supported right now.");
             }
         } catch (const RedirectException& ex) {
-            const auto& url = ex.url();
-            log_info("HTTP redirect detected. Going to URL: " << url);
-            m_url = url;
-            continue;
+            if (config->follow_redirects()) {
+                const auto& url = ex.url();
+                log_info("HTTP redirect detected. Going to URL: " << url);
+                m_url = url;
+                continue;
+            }
+            log_info("HTTP redirect detected. Following redirects disabled.");
+            break;
         } catch (const AuthException& ex) {
             log_info("HTTP Authorization detected. Please provide your credentials: ");
             std::cout << "Username: ";

@@ -6,6 +6,7 @@
 
 #include "ftp.h"
 #include "logger.h"
+#include "config.h"
 
 void FTPMethod::get(const std::string& fileToSave, const std::string& user,
                     const std::string& pw) const
@@ -13,8 +14,9 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
     TCPConnection tcp, tcp_pasv;
     int response, pasv_port;
     std::size_t len = 0;
-    tcp.connect(m_host, "ftp");
+    Config *config = Config::instance();
 
+    tcp.connect(m_host, "ftp");
     check_response(tcp, 220);
 
     if (user == "")
@@ -61,7 +63,10 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
     std::ofstream ofs(fileToSave);
     if (ofs.fail())
         EXCEPTION("Failed to open file: " << fileToSave);
-    tcp_pasv.read_until_eof_with_pg_to_fstream(ofs, len);
+    if (config->show_pg())
+        tcp_pasv.read_until_eof_with_pg_to_fstream(ofs, len);
+    else
+        tcp_pasv.read_until_eof_to_fstream(ofs);
     tcp_pasv.close();
 
     // done
