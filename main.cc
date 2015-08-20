@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     std::string user;
     std::string pw;
     bool show_pg = false;
-    bool dont_follow_redirects = true;
+    bool dont_follow_redirects = false;
     int c;
 
     if (argc <= 1)
