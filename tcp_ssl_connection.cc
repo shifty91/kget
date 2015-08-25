@@ -188,14 +188,12 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
         EXCEPTION("Not connected!");
 
     while (42) {
-        std::string result;
         int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
             break;
-        result.insert(0, buffer, tmp);
-        ofs << result;
+        ofs.write(buffer, tmp);
     }
 }
 
@@ -208,14 +206,12 @@ void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std
         EXCEPTION("Not connected!");
 
     while (42) {
-        std::string result;
         int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
             break;
-        result.insert(0, buffer, tmp);
-        ofs << result;
+        ofs.write(buffer, tmp);
         pg.update(tmp);
     }
 }

@@ -154,14 +154,12 @@ void TCPConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
         EXCEPTION("Not connected!");
 
     while (42) {
-        std::string result;
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
             EXCEPTION("read() to socket failed: " << strerror(errno));
         if (tmp == 0)
             break;
-        result.insert(0, buffer, tmp);
-        ofs << result;
+        ofs.write(buffer, tmp);
     }
 }
 
@@ -174,14 +172,12 @@ void TCPConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::s
         EXCEPTION("Not connected!");
 
     while (42) {
-        std::string result;
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
             EXCEPTION("read() to socket failed: " << strerror(errno));
         if (tmp == 0)
             break;
-        result.insert(0, buffer, tmp);
-        ofs << result;
+        ofs.write(buffer, tmp);
         pg.update(tmp);
     }
 }
