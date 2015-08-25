@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 
+#include "logger.h"
+
 #define TCP_WRITE(tcp, msg)                     \
     do {                                        \
         std::stringstream ss;                   \
@@ -33,6 +35,13 @@ public:
 
     Connection& operator=(const Connection& other) = delete;
     Connection& operator=(const Connection&& other) = delete;
+
+    inline int socket() const
+    {
+        if (!m_connected)
+            EXCEPTION("Not connected!");
+        return m_sock;
+    }
 
     virtual void connect(const std::string& host, const std::string& service) = 0;
 

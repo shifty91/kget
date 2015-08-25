@@ -36,7 +36,7 @@ void TCPConnection::connect(const std::string& host, const std::string& service)
 
     // try to connect to some record...
     for (sa = sa_head; sa != NULL; sa = sa->ai_next) {
-        sock = socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
+        sock = ::socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
         if (sock < 0) {
             log_err("socket() failed: " << strerror(errno));
             goto out;

@@ -4,6 +4,7 @@
 #include "logger.h"
 #include "http.h"
 #include "ftp.h"
+#include "sftp.h"
 #include "redirect_exception.h"
 #include "auth_exception.h"
 #include "utils.h"
@@ -39,6 +40,9 @@ void ProtocolDispatcher::dispatch()
             } else if (parser.method() == "ftp") {
                 FTPMethod ftp(parser.host(), parser.object());
                 ftp.get(name, m_user, m_pw);
+            } else if (parser.method() == "sftp") {
+                SFTPMethod sftp(parser.host(), parser.object());
+                sftp.get(name, m_user, m_pw);
             } else {
                 EXCEPTION("The method " << parser.method() <<
                           " is not supported right now.");
@@ -54,12 +58,8 @@ void ProtocolDispatcher::dispatch()
             break;
         } catch (const AuthException& ex) {
             log_info("HTTP Authorization detected. Please provide your credentials: ");
-            std::cout << "Username: ";
-            std::cin >> m_user;
-            Utils::hideStdinKeystrokes();
-            std::cout << "Password: ";
-            std::cin >> m_pw;
-            Utils::showStdinKeystrokes();
+            m_user = Utils::user_input("Username");
+            m_pw   = Utils::user_input_pw("Password");
             continue;
         }
 

@@ -7,6 +7,7 @@ set(SRCS
   tcp_ssl_connection.cc
   url_parser.cc
   ftp.cc
+  sftp.cc
   progress_bar.cc
   base64.cc
   protocol_dispatcher.cc
@@ -23,8 +24,13 @@ pkg_search_module(OPENSSL REQUIRED openssl)
 if (OPENSSL_FOUND)
   include_directories(${OPENSSL_INCLUDE_DIRS})
   message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
-else()
-  # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
+endif()
+
+# libssh2
+pkg_search_module(LIBSSH2 REQUIRED libssh2)
+if (LIBSSH2_FOUND)
+  include_directories(${LIBSSH2_INCLUDE_DIRS})
+  message(STATUS "Using LibSSH2 ${LIBSSH2_VERSION}")
 endif()
 
 # Termios.h
@@ -36,4 +42,5 @@ endif()
 
 add_executable(get ${SRCS})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
+target_link_libraries(get ${LIBSSH2_LIBRARIES})
 install(TARGETS get DESTINATION /usr/bin COMPONENT binaries)

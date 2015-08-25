@@ -15,10 +15,6 @@
  */
 class TCPConnection : public Connection
 {
-private:
-    int m_sock;
-    bool m_connected;
-
 public:
     TCPConnection() :
         Connection()
@@ -34,6 +30,13 @@ public:
 
     TCPConnection& operator=(const TCPConnection& other) = delete;
     TCPConnection& operator=(const TCPConnection&& other) = delete;
+
+    inline int socket() const
+    {
+        if (!m_connected)
+            EXCEPTION("Not connected!");
+        return m_sock;
+    }
 
     virtual void connect(const std::string& host, const std::string& service) override;
 
