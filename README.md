@@ -11,7 +11,7 @@ the same thing as BSD's fetch.
 
 Supported right now:
 
-- HTTP, HTTPS and FTP
+- HTTP, HTTPS, FTP and SFTP
 - IPv4 and IPv6 (v6 is preferred in DNS lookups)
 - HTTP Basic Auth
 
@@ -29,6 +29,7 @@ Example:
 ## Dependencies ##
 
 - OpenSSL
+- LibSSH2
 - termios
 
 ## Author ##
