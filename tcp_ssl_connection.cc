@@ -11,33 +11,18 @@
 #include <netdb.h>
 #include <errno.h>
 
-#define SSL_EXCEPTION(msg)                        \
-    do {                                          \
-        ERR_print_errors_fp(stderr);              \
-        EXCEPTION(msg);                           \
-    } while (0)
-
 void TCPSSLConnection::init_ssl()
 {
     SSL_load_error_strings();
     SSL_library_init();
 
-    // FIXME: this code is not exception safe
-    m_ssl_context = SSL_CTX_new(SSLv23_client_method());
-    if (m_ssl_context == nullptr)
-        SSL_EXCEPTION("SSL_CTX_new() failed.");
+    m_ssl_context.context_new(SSLv23_client_method());
+    m_ssl_context.set_options(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 
-    SSL_CTX_set_options(m_ssl_context, SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+    m_ssl_handle.ssl_new(m_ssl_context);
 
-    m_ssl_handle = SSL_new(m_ssl_context);
-    if (m_ssl_handle == nullptr)
-        SSL_EXCEPTION("SSL_new() failed");
-
-    if (!SSL_set_fd(m_ssl_handle, m_sock))
-        SSL_EXCEPTION("SSL_set_fd() failed.");
-
-    if (SSL_connect(m_ssl_handle) != 1)
-        SSL_EXCEPTION("SSL_connect() failed.");
+    m_ssl_handle.set_fd(m_sock);
+    m_ssl_handle.connect();
 }
 
 void TCPSSLConnection::connect(const std::string& host, int port)
@@ -103,7 +88,7 @@ void TCPSSLConnection::write(const std::string& toWrite) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(len)>(written) < len) {
-        int tmp = SSL_write(m_ssl_handle, start + written, len - written);
+        int tmp = SSL_write(m_ssl_handle.handle(), start + written, len - written);
         if (tmp <= 0)
             EXCEPTION("SSL_write() failed: " << strerror(errno));
         written += tmp;
@@ -120,7 +105,7 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
         if (tmp <= 0)
             EXCEPTION("SSL_read() failed");
         result.insert(read, buffer, tmp);
@@ -142,7 +127,7 @@ std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -167,7 +152,7 @@ std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
         if (tmp == -1)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -188,7 +173,7 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
         EXCEPTION("Not connected!");
 
     while (42) {
-        int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -206,7 +191,7 @@ void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std
         EXCEPTION("Not connected!");
 
     while (42) {
-        int tmp = SSL_read(m_ssl_handle, buffer, sizeof(buffer));
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -227,7 +212,7 @@ std::string TCPSSLConnection::read_ln() const
 
     // FIXME: This is kind of slow
     while (42) {
-        int tmp = SSL_read(m_ssl_handle, buffer, 1);
+        int tmp = SSL_read(m_ssl_handle.handle(), buffer, 1);
         if (tmp == -1)
             EXCEPTION("SSL_read() failed.");
         result.insert(read, buffer, tmp);

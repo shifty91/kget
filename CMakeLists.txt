@@ -40,6 +40,7 @@ if (NOT HAVE_TERMIOS_H)
   message(FATAL_ERROR "termios.h not found")
 endif()
 
+include_directories("." "ssl")
 add_executable(get ${SRCS})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})

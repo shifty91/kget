@@ -6,11 +6,8 @@
 
 #include <unistd.h>
 
-#include <openssl/rand.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-
 #include "connection.h"
+#include "ssl/wrapper.h"
 
 /**
  * This class represents a TCP connection using SSL over TLS.
@@ -21,15 +18,15 @@
 class TCPSSLConnection : public Connection
 {
 private:
-    SSL *m_ssl_handle;
-    SSL_CTX *m_ssl_context;
+    SSLHandle m_ssl_handle;
+    SSLContext m_ssl_context;
 
     void init_ssl();
     void tcp_connect(const std::string& host, const std::string& service);
 
 public:
     TCPSSLConnection() :
-        Connection(), m_ssl_handle{nullptr}, m_ssl_context{nullptr}
+        Connection()
     {}
 
     ~TCPSSLConnection()
@@ -49,14 +46,8 @@ public:
 
     virtual inline void close() override
     {
-        if (m_connected) {
+        if (m_connected)
             ::close(m_sock);
-
-            SSL_shutdown(m_ssl_handle);
-            SSL_free(m_ssl_handle);
-
-            SSL_CTX_free(m_ssl_context);
-        }
         m_connected = false;
     }
 
