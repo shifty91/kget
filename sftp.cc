@@ -176,4 +176,6 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
 
     libssh2_session_disconnect(session, "Shutdown");
     libssh2_session_free(session);
+
+    libssh2_exit();
 }
