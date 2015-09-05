@@ -9,10 +9,11 @@ private:
     static const unsigned m_width = 80;
     const std::size_t m_bytes;
     std::size_t m_bytes_received;
+    unsigned m_old_position;
 
 public:
     ProgressBar(std::size_t bytes) :
-        m_bytes{bytes}, m_bytes_received{0}
+        m_bytes{bytes}, m_bytes_received{0}, m_old_position{0}
     {}
 
     void update(std::size_t new_bytes = 1);
