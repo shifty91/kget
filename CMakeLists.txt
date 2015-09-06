@@ -17,6 +17,13 @@ set(SRCS
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pedantic -Wall -march=native")
 set(CMAKE_BUILD_TYPE "Release")
 
+# check for C++14
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++14" COMPILER_SUPPORTS_CXX14)
+if (NOT COMPILER_SUPPORTS_CXX14)
+  message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
+endif()
+
 # Search OpenSSL
 find_package(PkgConfig REQUIRED)
 pkg_search_module(OPENSSL REQUIRED openssl)
@@ -34,8 +41,8 @@ if (LIBSSH2_FOUND)
 endif()
 
 # Termios.h
-INCLUDE(CheckIncludeFiles)
-CHECK_INCLUDE_FILES("termios.h" HAVE_TERMIOS_H)
+include(CheckIncludeFiles)
+check_include_files("termios.h" HAVE_TERMIOS_H)
 if (NOT HAVE_TERMIOS_H)
   message(FATAL_ERROR "termios.h not found")
 endif()
