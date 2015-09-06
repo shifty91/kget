@@ -17,7 +17,7 @@ std::pair<std::size_t, std::string> ProgressBar::unit(std::size_t file_size) con
         size /= 1024;
         ++i;
     }
-    assert(i < units.size());
+    assert(static_cast<decltype(units.size())>(i) < units.size());
 
     return { size, units[i] };
 }
