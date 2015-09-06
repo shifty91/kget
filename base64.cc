@@ -1,33 +1,22 @@
-#include <openssl/md5.h>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
-#include <openssl/buffer.h>
-
 #include "base64.h"
 #include "logger.h"
+#include "ssl/ssl_wrapper.h"
 
 std::string Base64::encode() const
 {
     std::string result;
-    BIO *bmem, *b64;
-    BUF_MEM *bptr;
+    BIOHandle b64(BIO_f_base64()), bmem(BIO_s_mem());
 
-    b64  = BIO_new(BIO_f_base64());
-    bmem = BIO_new(BIO_s_mem());
-
-    if (b64 == nullptr || bmem == nullptr)
-        EXCEPTION("BIO_new() failed");
-
-    b64 = BIO_push(b64, bmem);
-    BIO_write(b64, &m_content[0], m_content.size());
-    (void)BIO_flush(b64);
-    BIO_get_mem_ptr(b64, &bptr);
+    b64.push(bmem);
+    b64.write(m_content.data(), m_content.size());
+    b64.flush();
+    auto *bptr = b64.get_mem_ptr();
 
     result.reserve(bptr->length);
     result.insert(0, bptr->data, bptr->length-1);
     result[bptr->length-1] = '\0';
 
-    BIO_free_all(b64);
+    b64.pop();
 
     return result;
 }

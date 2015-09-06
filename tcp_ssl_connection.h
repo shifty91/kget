@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #include "connection.h"
-#include "ssl/wrapper.h"
+#include "ssl/ssl_wrapper.h"
 
 /**
  * This class represents a TCP connection using SSL over TLS.
