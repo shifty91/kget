@@ -2,16 +2,16 @@ cmake_minimum_required(VERSION 2.6)
 project(get)
 
 set(SRCS
-  main.cc
-  tcp_connection.cc
-  tcp_ssl_connection.cc
-  url_parser.cc
-  ftp.cc
-  sftp.cc
-  progress_bar.cc
-  base64.cc
-  protocol_dispatcher.cc
-  config.cc
+  src/main.cc
+  src/tcp_connection.cc
+  src/tcp_ssl_connection.cc
+  src/url_parser.cc
+  src/ftp.cc
+  src/sftp.cc
+  src/progress_bar.cc
+  src/base64.cc
+  src/protocol_dispatcher.cc
+  src/config.cc
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pedantic -Wall -march=native")
@@ -47,7 +47,7 @@ if (NOT HAVE_TERMIOS_H)
   message(FATAL_ERROR "termios.h not found")
 endif()
 
-include_directories("." "ssl")
+include_directories("src" "src/ssl")
 add_executable(get ${SRCS})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})
