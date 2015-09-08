@@ -153,7 +153,7 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
         char buffer[4096];
         auto read = sftp_handle.read(buffer, sizeof(buffer));
         if (read < 0)
-            EXCEPTION("libssh2_sftp_read() failed.");
+            SFTP_EXCEPTION(sftp_session.session(), "libssh2_sftp_read() failed");
         if (read == 0)
             break;
         ofs.write(buffer, read);

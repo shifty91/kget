@@ -7,6 +7,7 @@
 #include <libssh2_sftp.h>
 
 #include "ssh/sftp_session.h"
+#include "ssh/ssh_utilities.h"
 #include "logger.h"
 
 class SFTPHandle
@@ -25,7 +26,7 @@ public:
     {
         m_handle = libssh2_sftp_open(sftp_session, object.c_str(), flags, mode);
         if (m_handle == nullptr)
-            EXCEPTION("libssh2_sftp_open() failed.");
+            SFTP_EXCEPTION(sftp_session, "libssh2_sftp_open() failed");
     }
 
     inline ~SFTPHandle()

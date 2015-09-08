@@ -4,6 +4,7 @@
 #include <string>
 #include <libssh2.h>
 
+#include "ssh/ssh_utilities.h"
 #include "logger.h"
 
 class SSHSession
@@ -18,7 +19,7 @@ public:
     {
         m_session = libssh2_session_init();
         if (m_session == nullptr)
-            EXCEPTION("libssh2_session_init() failed.");
+            SSH_EXCEPTION(m_session, "libssh2_session_init() failed");
     }
 
     inline ~SSHSession()
@@ -47,7 +48,7 @@ public:
     inline void handshake(int socket)
     {
         if (libssh2_session_handshake(m_session, socket))
-            EXCEPTION("libssh2_session_handshake() failed.");
+            SSH_EXCEPTION(m_session, "libssh2_session_handshake() failed");
         m_connected = true;
     }
 

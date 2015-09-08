@@ -6,6 +6,7 @@
 
 #include "ssh/ssh_session.h"
 #include "ssh/sftp_handle.h"
+#include "ssh/ssh_utilities.h"
 
 #include "logger.h"
 
@@ -35,18 +36,23 @@ public:
     SFTPSession& operator=(const SFTPSession& other) = delete;
     SFTPSession& operator=(const SFTPSession&& other) = delete;
 
+    inline LIBSSH2_SFTP *session()
+    {
+        return m_session;
+    }
+
     inline void new_session(SSHSession& ssh)
     {
         m_session = libssh2_sftp_init(ssh.session());
         if (m_session == nullptr)
-            EXCEPTION("libssh2_sftp_init() failed.");
+            SFTP_EXCEPTION(m_session, "libssh2_sftp_init() failed");
     }
 
     inline auto stat(const std::string& object)
     {
         LIBSSH2_SFTP_ATTRIBUTES attrs;
         if (libssh2_sftp_stat(m_session, object.c_str(), &attrs))
-            EXCEPTION("libssh2_sftp_stat() failed.");
+            SFTP_EXCEPTION(m_session, "libssh2_sftp_stat() failed");
         return attrs;
     }
 
