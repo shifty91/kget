@@ -2,6 +2,9 @@
 #include <array>
 #include <iostream>
 
+#include <libssh2.h>
+#include <libssh2_sftp.h>
+
 #include "tcp_connection.h"
 #include "logger.h"
 #include "utils.h"
@@ -57,7 +60,7 @@ void SFTPMethod::print_fingerprint(const std::string& fingerprint) const
     log_info(ss.str());
 }
 
-void SFTPMethod::publickey_auth(LIBSSH2_SESSION *session, const std::string& user) const
+void SFTPMethod::publickey_auth(SSHSession& session, const std::string& user) const
 {
     auto keys = find_user_keys();
     auto len = keys.size();
@@ -65,33 +68,31 @@ void SFTPMethod::publickey_auth(LIBSSH2_SESSION *session, const std::string& use
 
     // FIXME: Use SSH-Agent, if key is protected with passphrase
     for (decltype(len) i = 0; i < len; ++i) {
-        int rc = libssh2_userauth_publickey_fromfile(session, user.c_str(), keys[i].first.c_str(),
-                                                     keys[i].second.c_str(), "");
+        auto rc = session.auth_key(user, keys[i].first, keys[i].second, "");
         if (rc == 0) {
             authenticated = true;
             break;
         } else if (rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED) {
+            log_dbg("Publickey is unverified. Trying to get a passphrase.");
             // we need a passphrase
             std::string passphrase = Utils::user_input_pw("Enter passphrase");
-            int rc = libssh2_userauth_publickey_fromfile(session, user.c_str(), keys[i].first.c_str(),
-                                                         keys[i].second.c_str(), passphrase.c_str());
+            auto rc = session.auth_key(user, keys[i].first, keys[i].second, passphrase);
             if (rc != 0)
                 EXCEPTION("Wrong passphrase!");
             authenticated = true;
         }
     }
+
     if (!authenticated)
-        EXCEPTION("Public key authentication failed.");
+        EXCEPTION("Publickey authentication failed.");
 }
 
 void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
                      const std::string& pw) const
 {
     TCPConnection tcp;
-    LIBSSH2_SESSION *session;
-    LIBSSH2_SFTP *sftp_session;
-    LIBSSH2_SFTP_HANDLE *sftp_handle;
-    LIBSSH2_SFTP_ATTRIBUTES file_attr;
+    SSHSession session;
+    SFTPSession sftp_session;
     std::string fingerprint;
     std::string userauthlist;
     std::string object(m_object);
@@ -100,30 +101,23 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     tcp.connect(m_host, "ssh");
     sock = tcp.socket();
 
-    // FIXME: This code is not exception safe
     if (libssh2_init(0))
         EXCEPTION("libssh2_init() failed.");
 
-    session = libssh2_session_init();
-    if (!session)
-        EXCEPTION("libssh2_session_init() failed.");
+    session.set_blocking(true);
+    session.handshake(sock);
 
-    libssh2_session_set_blocking(session, 1);
-
-    if (libssh2_session_handshake(session, sock))
-        EXCEPTION("libssh2_session_handshake() failed.");
-
-    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    fingerprint = session.hostkey(LIBSSH2_HOSTKEY_HASH_SHA1);
     print_fingerprint(fingerprint);
 
-    userauthlist = libssh2_userauth_list(session, user.c_str(), user.size());
+    userauthlist = session.auth_list(user);
 
     // password authentication
     if (pw != "") {
         std::size_t found = userauthlist.find("password");
         if (found == std::string::npos)
             EXCEPTION("Username and password specified, but password authenticate is not supported.");
-        if (libssh2_userauth_password(session, user.c_str(), pw.c_str()))
+        if (!session.auth_pw(user, pw))
             EXCEPTION("Authentication failed!");
     } else { // public key
         auto found = userauthlist.find("publickey");
@@ -133,9 +127,7 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     }
 
     // start sftp
-    sftp_session = libssh2_sftp_init(session);
-    if (!sftp_session)
-        EXCEPTION("libssh2_sftp_init() failed.");
+    sftp_session.new_session(session);
 
     if (m_object[0] != '/') {
         std::stringstream ss;
@@ -144,13 +136,11 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     }
 
     // stat file
-    if (libssh2_sftp_stat(sftp_session, object.c_str(), &file_attr))
-        EXCEPTION("libssh2_sftp_stat() failed.");
+    auto file_attr = sftp_session.stat(object);
     auto len = file_attr.filesize;
 
-    sftp_handle = libssh2_sftp_open(sftp_session, object.c_str(), LIBSSH2_FXF_READ, 0);
-    if (!sftp_handle)
-        EXCEPTION("libssh2_sftp_open() failed.");
+    // open file
+    auto sftp_handle = sftp_session.open(object, LIBSSH2_FXF_READ, 0);
 
     // get and save file
     ProgressBar pg(len);
@@ -161,7 +151,7 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
 
     while (42) {
         char buffer[4096];
-        int read = libssh2_sftp_read(sftp_handle, buffer, sizeof(buffer));
+        auto read = sftp_handle.read(buffer, sizeof(buffer));
         if (read < 0)
             EXCEPTION("libssh2_sftp_read() failed.");
         if (read == 0)
@@ -171,11 +161,5 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     }
 
     // shutdown libssh2
-    libssh2_sftp_close(sftp_handle);
-    libssh2_sftp_shutdown(sftp_session);
-
-    libssh2_session_disconnect(session, "Shutdown");
-    libssh2_session_free(session);
-
     libssh2_exit();
 }
