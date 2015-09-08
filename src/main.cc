@@ -25,7 +25,7 @@ void print_usage_and_die()
     std::cerr << "    -u <user>: username" << std::endl;
     std::cerr << "    -k <pw>  : password" << std::endl;
     std::cerr << "    -f       : do not follow HTTP redirects" << std::endl;
-    std::cerr << "get version 1.0 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
+    std::cerr << "get version 1.1 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     exit(-1);
 }
 

@@ -7,7 +7,12 @@ the same thing as BSD's fetch.
 
 ## Usage ##
 
-    $ get <url>
+    $ usage: get [options] <url>
+    $   options:
+    $     -p       : show progressbar if available
+    $     -u <user>: username
+    $     -k <pw>  : password
+    $     -f       : do not follow HTTP redirects
 
 Supported right now:
 
