@@ -22,7 +22,6 @@ private:
     SSLContext m_ssl_context;
 
     void init_ssl();
-    void tcp_connect(const std::string& host, const std::string& service);
 
 public:
     TCPSSLConnection() :

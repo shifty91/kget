@@ -12,6 +12,7 @@ set(SRCS
   src/base64.cc
   src/protocol_dispatcher.cc
   src/config.cc
+  src/net_utils.cc
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pedantic -Wall -march=native")

@@ -2,6 +2,7 @@
 
 #include "logger.h"
 #include "progress_bar.h"
+#include "net_utils.h"
 
 #include <cstring>
 #include <stdexcept>
@@ -18,44 +19,8 @@ void TCPConnection::connect(const std::string& host, int port)
 
 void TCPConnection::connect(const std::string& host, const std::string& service)
 {
-    int res;
-    int sock;
-    struct addrinfo *sa_head, *sa, hints;
-
     close();
-
-    std::memset(&hints, 0, sizeof(hints));
-    hints.ai_socktype = SOCK_STREAM;
-    /* use IPv6 or IPv4 */
-    hints.ai_family   = PF_UNSPEC;
-    hints.ai_flags    = AI_ADDRCONFIG;
-
-    res = getaddrinfo(host.c_str(), service.c_str(), &hints, &sa_head);
-    if (res)
-        EXCEPTION("getaddrinfo() for host " << host << " failed: " << gai_strerror(res));
-
-    // try to connect to some record...
-    for (sa = sa_head; sa != NULL; sa = sa->ai_next) {
-        sock = ::socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
-        if (sock < 0) {
-            log_err("socket() failed: " << strerror(errno));
-            goto out;
-        }
-
-        if (!::connect(sock, sa->ai_addr, sa->ai_addrlen))
-            break;
-
-        ::close(sock);
-    }
-
-    if (!sa)
-        EXCEPTION("connect() for host " << host << " on service " << service <<
-                  " failed: " << strerror(errno));
-
-out:
-    freeaddrinfo(sa_head);
-
-    m_sock = sock;
+    m_sock = NetUtils::tcp_connect(host.c_str(), service.c_str());
     m_connected = true;
 }
 
