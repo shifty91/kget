@@ -3,7 +3,11 @@
 
 #include <termios.h>
 #include <cstdlib>
+#include <cstdio>
 #include <fstream>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <cstring>
 
 #include "logger.h"
 
@@ -72,6 +76,18 @@ public:
             EXCEPTION("Failed to get user input.");
         show_stdin_keystrokes();
         return input;
+    }
+
+    static inline unsigned terminal_width()
+    {
+        int rc;
+        struct winsize w;
+        rc = ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        if (rc) {
+            log_err("ioctl() for getting terminal width failed: " << strerror(rc) << ". Using 80 columns.");
+            return 80;
+        }
+        return w.ws_col;
     }
 };
 

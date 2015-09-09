@@ -5,6 +5,8 @@
 #include <string>
 #include <utility>
 
+#include "utils.h"
+
 /**
  * Progress bar looks like this:
  *
@@ -13,7 +15,7 @@
 class ProgressBar
 {
 private:
-    static const unsigned m_width = 80;
+    unsigned m_width;
     const std::size_t m_bytes;
     std::size_t m_bytes_received;
     unsigned m_old_position;
@@ -24,7 +26,11 @@ private:
 public:
     ProgressBar(std::size_t bytes) :
         m_bytes{bytes}, m_bytes_received{0}, m_old_position{0}
-    {}
+    {
+        m_width = Utils::terminal_width();
+        // taking like 80 %
+        m_width = m_width * 80 / 100;
+    }
 
     void update(std::size_t new_bytes = 1);
 };
