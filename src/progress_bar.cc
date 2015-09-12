@@ -1,23 +1,33 @@
-#include "progress_bar.h"
-
 #include <iostream>
 #include <array>
 #include <sstream>
 #include <cassert>
+#include <cmath>
 
-std::pair<std::size_t, std::string> ProgressBar::unit(std::size_t file_size) const
+
+#include <timer.h>
+
+#include "progress_bar.h"
+
+std::pair<double, std::string> ProgressBar::unit(std::size_t file_size,
+                                                 unsigned precision) const
 {
     const std::array<std::string, 5> units = {
         "B", "KiB", "MiB", "GiB", "TiB"
     };
 
     int i = 0;
-    std::size_t size = file_size;
+    double size = file_size;
     while (size >= 1024) {
         size /= 1024;
         ++i;
     }
     assert(static_cast<decltype(units.size())>(i) < units.size());
+
+    if (precision > 0)
+        size = std::round(size * 10. * precision) / (10. * precision);
+    else
+        size = std::round(size);
 
     return { size, units[i] };
 }
@@ -35,6 +45,24 @@ std::string ProgressBar::build_size() const
     return ss.str();
 }
 
+std::string ProgressBar::rate(std::size_t bytes_received)
+{
+    // calc
+    auto now = std::chrono::high_resolution_clock::now();
+    double elapsed = std::chrono::duration_cast<
+        std::chrono::duration<
+            double, std::chrono::seconds::period> >(
+                 now - m_old_time).count();
+    m_old_time = now;
+    std::size_t rate = bytes_received / elapsed;
+    auto unit_ = unit(rate, 1);
+
+    // build
+    std::stringstream ss;
+    ss << unit_.first << " " << unit_.second << "/s";
+    return ss.str();
+}
+
 void ProgressBar::update(std::size_t new_bytes)
 {
     m_bytes_received += new_bytes;
@@ -46,7 +74,7 @@ void ProgressBar::update(std::size_t new_bytes)
     // done?
     if (m_bytes_received >= m_bytes) {
         std::cout << "\r";
-        for (unsigned i = 0; i < m_width + unit_str.size() + 10; ++i)
+        for (auto i = 0u; i < m_cols - 1; ++i)
             std::cout << " ";
         std::cout << "\r";
         std::cout.flush();
@@ -58,9 +86,12 @@ void ProgressBar::update(std::size_t new_bytes)
         return;
 
     // redraw
+    unsigned cnt = 0;
     m_old_position = position;
+    auto rate_str = rate(m_bytes_received - m_old_byte_cnt);
+    m_old_byte_cnt = m_bytes_received;
     std::cout << "\r[";
-    for (unsigned i = 0; i < m_width; ++i) {
+    for (unsigned i = 0; i < m_width; ++i, ++cnt) {
         if (i < position)
             std::cout << "*";
         else if (i == position)
@@ -69,6 +100,10 @@ void ProgressBar::update(std::size_t new_bytes)
             std::cout << " ";
     }
     std::cout << "] ";
-    std::cout << unit_str;
+    cnt += 2;
+    std::cout << unit_str << " @ " << rate_str;
+    cnt += unit_str.size() + rate_str.size() + 3;
+    for (auto i = cnt; i < m_cols - 1; ++i)
+        std::cout << " ";
     std::cout.flush();
 }
