@@ -4,9 +4,6 @@
 #include <cassert>
 #include <cmath>
 
-
-#include <timer.h>
-
 #include "progress_bar.h"
 
 std::pair<double, std::string> ProgressBar::unit(std::size_t file_size,
