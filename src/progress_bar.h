@@ -35,8 +35,8 @@ public:
         m_old_time{std::chrono::high_resolution_clock::now()},
         m_old_byte_cnt{0}
     {
-        // taking like 70 %
-        m_width = m_cols * 70 / 100;
+        // taking like 50 %
+        m_width = m_cols * 50 / 100;
     }
 
     void update(std::size_t new_bytes = 1);
