@@ -27,7 +27,7 @@ endif()
 
 # Search OpenSSL
 find_package(PkgConfig REQUIRED)
-pkg_search_module(OPENSSL REQUIRED openssl)
+pkg_search_module(OPENSSL REQUIRED openssl>=1.0.2)
 
 if (OPENSSL_FOUND)
   include_directories(${OPENSSL_INCLUDE_DIRS})
