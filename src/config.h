@@ -8,10 +8,13 @@ private:
     bool m_show_pg;
     bool m_follow_redirects;
     bool m_verify_peer;
+    bool m_use_sslv2;
+    bool m_use_sslv3;
 
 public:
     Config() :
-        m_show_pg{true}, m_follow_redirects{true}, m_verify_peer{false}
+        m_show_pg{true}, m_follow_redirects{true}, m_verify_peer{false},
+        m_use_sslv2{false}, m_use_sslv3{false}
     {}
 
     ~Config()
@@ -54,6 +57,26 @@ public:
     inline bool& verify_peer()
     {
         return m_verify_peer;
+    }
+
+    inline const bool& use_sslv2() const
+    {
+        return m_use_sslv2;
+    }
+
+    inline bool& use_sslv2()
+    {
+        return m_use_sslv2;
+    }
+
+    inline const bool& use_sslv3() const
+    {
+        return m_use_sslv3;
+    }
+
+    inline bool& use_sslv3()
+    {
+        return m_use_sslv3;
     }
 };
 

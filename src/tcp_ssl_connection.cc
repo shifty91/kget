@@ -21,7 +21,10 @@ void TCPSSLConnection::init_ssl(const std::string& host)
     SSL_library_init();
 
     m_ssl_context.context_new(SSLv23_client_method());
-    m_ssl_context.set_options(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
+    if (!Config::instance()->use_sslv2())
+        m_ssl_context.set_options(SSL_OP_NO_SSLv2);
+    if (!Config::instance()->use_sslv3())
+        m_ssl_context.set_options(SSL_OP_NO_SSLv3);
 
     m_ssl_context.set_cipher_list("HIGH:MEDIUM:!RC4:!SRP:!PSK:!MD5:!aNULL@STRENGTH");
     m_ssl_context.set_default_verify_paths();
