@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "progress_bar.h"
 #include "net_utils.h"
+#include "config.h"
 
 #include <cstring>
 #include <stdexcept>
@@ -12,7 +13,9 @@
 #include <netdb.h>
 #include <errno.h>
 
-void TCPSSLConnection::init_ssl()
+#include <openssl/x509v3.h>
+
+void TCPSSLConnection::init_ssl(const std::string& host)
 {
     SSL_load_error_strings();
     SSL_library_init();
@@ -20,9 +23,21 @@ void TCPSSLConnection::init_ssl()
     m_ssl_context.context_new(SSLv23_client_method());
     m_ssl_context.set_options(SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3);
 
-    m_ssl_handle.ssl_new(m_ssl_context);
+    m_ssl_context.set_cipher_list("HIGH:MEDIUM:!RC4:!SRP:!PSK:!MD5:!aNULL@STRENGTH");
+    m_ssl_context.set_default_verify_paths();
 
+    m_ssl_handle.ssl_new(m_ssl_context);
     m_ssl_handle.set_fd(m_sock);
+
+    // verify certificate
+    if (Config::instance()->verify_peer()) {
+        X509_VERIFY_PARAM *param;
+        param = SSL_get0_param(m_ssl_handle.handle());
+
+        X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+        X509_VERIFY_PARAM_set1_host(param, host.c_str(), 0);
+        m_ssl_handle.set_verify(SSL_VERIFY_PEER, nullptr);
+    }
     m_ssl_handle.connect();
 }
 
@@ -35,7 +50,7 @@ void TCPSSLConnection::connect(const std::string& host, const std::string& servi
 {
     close();
     m_sock = NetUtils::tcp_connect(host.c_str(), service.c_str());
-    init_ssl();
+    init_ssl(host);
     m_connected = true;
 }
 

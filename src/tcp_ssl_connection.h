@@ -21,7 +21,7 @@ private:
     SSLHandle m_ssl_handle;
     SSLContext m_ssl_context;
 
-    void init_ssl();
+    void init_ssl(const std::string& host);
 
 public:
     TCPSSLConnection() :

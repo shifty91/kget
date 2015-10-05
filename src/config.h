@@ -7,10 +7,11 @@ private:
     static Config *m_instance;
     bool m_show_pg;
     bool m_follow_redirects;
+    bool m_verify_peer;
 
 public:
     Config() :
-        m_show_pg{true}, m_follow_redirects{true}
+        m_show_pg{true}, m_follow_redirects{true}, m_verify_peer{false}
     {}
 
     ~Config()
@@ -43,6 +44,16 @@ public:
     inline bool& follow_redirects()
     {
         return m_follow_redirects;
+    }
+
+    inline const bool& verify_peer() const
+    {
+        return m_verify_peer;
+    }
+
+    inline bool& verify_peer()
+    {
+        return m_verify_peer;
     }
 };
 

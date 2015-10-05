@@ -52,6 +52,17 @@ public:
     {
         (void)SSL_CTX_set_options(m_ssl_context, options);
     }
+
+    inline void set_cipher_list(const std::string& cipher_list)
+    {
+        if (SSL_CTX_set_cipher_list(m_ssl_context, cipher_list.c_str()) != 1)
+            EXCEPTION("SSL_CTX_set_cipher_list() failed.");
+    }
+
+    inline void set_default_verify_paths()
+    {
+        SSL_CTX_set_default_verify_paths(m_ssl_context);
+    }
 };
 
 #endif /* _SSL_CONTEXT_H_ */

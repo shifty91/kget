@@ -25,7 +25,8 @@ void print_usage_and_die()
     std::cerr << "    -u <user>: username" << std::endl;
     std::cerr << "    -k <pw>  : password" << std::endl;
     std::cerr << "    -f       : do not follow HTTP redirects" << std::endl;
-    std::cerr << "get version 1.1 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
+    std::cerr << "    -v       : verify server's SSL certificate" << std::endl;
+    std::cerr << "get version 1.2 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     exit(-1);
 }
 
@@ -38,12 +39,13 @@ int main(int argc, char *argv[])
     std::string pw;
     bool show_pg = false;
     bool dont_follow_redirects = false;
+    bool verify_peer = false;
     int c;
 
     if (argc <= 1)
         print_usage_and_die();
 
-    while ((c = getopt(argc, argv, "pfu:k:")) != -1) {
+    while ((c = getopt(argc, argv, "vpfu:k:")) != -1) {
         switch (c) {
         case 'p':
             show_pg = 1;
@@ -57,6 +59,9 @@ int main(int argc, char *argv[])
         case 'k':
             pw = optarg;
             break;
+        case 'v':
+            verify_peer = true;
+            break;
         case '?':
             print_usage_and_die();
         case ':':
@@ -69,6 +74,7 @@ int main(int argc, char *argv[])
 
     config->show_pg() = show_pg;
     config->follow_redirects() = !dont_follow_redirects;
+    config->verify_peer() = verify_peer;
 
     // dispatch
     try {
@@ -77,7 +83,7 @@ int main(int argc, char *argv[])
     } catch (const std::exception&) {
         log_info("Unfortunately an error has occured :(. For more information read "
                  "error messages above.");
-        exit(-1);
+        std::exit(-1);
     }
 
     return 0;

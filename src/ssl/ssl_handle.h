@@ -59,6 +59,16 @@ public:
             GET_SSL_EXCEPTION("SSL_set_fd() failed.");
     }
 
+    inline void set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *))
+    {
+        SSL_set_verify(m_ssl_handle, mode, verify_callback);
+    }
+
+    inline int get_verify_result()
+    {
+        return SSL_get_verify_result(m_ssl_handle);
+    }
+
     inline SSL *handle() const
     {
         return m_ssl_handle;
