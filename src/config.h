@@ -13,7 +13,7 @@ private:
 
 public:
     Config() :
-        m_show_pg{true}, m_follow_redirects{true}, m_verify_peer{false},
+        m_show_pg{false}, m_follow_redirects{true}, m_verify_peer{false},
         m_use_sslv2{false}, m_use_sslv3{false}
     {}
 

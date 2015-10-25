@@ -35,15 +35,10 @@ void print_usage_and_die()
 int main(int argc, char *argv[])
 {
     // parse args
-    Config *config = Config::instance();
+    auto *config = Config::instance();
     std::string url;
     std::string user;
     std::string pw;
-    bool show_pg = false;
-    bool dont_follow_redirects = false;
-    bool verify_peer = false;
-    bool use_sslv2 = false;
-    bool use_sslv3 = false;
     int c;
 
     if (argc <= 1)
@@ -52,10 +47,10 @@ int main(int argc, char *argv[])
     while ((c = getopt(argc, argv, "23vpfu:k:")) != -1) {
         switch (c) {
         case 'p':
-            show_pg = 1;
+            config->show_pg() = true;
             break;
         case 'f':
-            dont_follow_redirects = 1;
+            config->follow_redirects() = false;
             break;
         case 'u':
             user = optarg;
@@ -64,16 +59,15 @@ int main(int argc, char *argv[])
             pw = optarg;
             break;
         case 'v':
-            verify_peer = true;
+            config->verify_peer() = true;
             break;
         case '2':
-            use_sslv2 = true;
+            config->use_sslv2() = true;
             break;
         case '3':
-            use_sslv3 = true;
+            config->use_sslv3() = true;
             break;
         case '?':
-            print_usage_and_die();
         case ':':
             print_usage_and_die();
         }
@@ -81,12 +75,6 @@ int main(int argc, char *argv[])
     if (optind >= argc)
         print_usage_and_die();
     url = argv[optind];
-
-    config->show_pg() = show_pg;
-    config->follow_redirects() = !dont_follow_redirects;
-    config->verify_peer() = verify_peer;
-    config->use_sslv2() = use_sslv2;
-    config->use_sslv3() = use_sslv3;
 
     // dispatch
     try {
