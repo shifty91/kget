@@ -29,7 +29,7 @@ void print_usage_and_die()
     std::cerr << "    -2       : use SSL version 2" << std::endl;
     std::cerr << "    -3       : use SSL version 3" << std::endl;
     std::cerr << "get version 1.2 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
-    exit(-1);
+    std::exit(-1);
 }
 
 int main(int argc, char *argv[])
