@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 #include <cstdlib>
 #include <libgen.h>
 
@@ -19,7 +20,7 @@
 static inline
 void print_usage_and_die()
 {
-    std::cerr << "usage: get [options] <url>" << std::endl;
+    std::cerr << "usage: get [options] <url> [more urls]" << std::endl;
     std::cerr << "  options:" << std::endl;
     std::cerr << "    -p       : show progressbar if available" << std::endl;
     std::cerr << "    -u <user>: username" << std::endl;
@@ -36,7 +37,7 @@ int main(int argc, char *argv[])
 {
     // parse args
     auto *config = Config::instance();
-    std::string url;
+    std::vector<std::string> urls;
     std::string user;
     std::string pw;
     int c;
@@ -74,16 +75,19 @@ int main(int argc, char *argv[])
     }
     if (optind >= argc)
         print_usage_and_die();
-    url = argv[optind];
+    for (auto i = optind; i < argc; ++i)
+        urls.emplace_back(argv[i]);
 
     // dispatch
-    try {
-        ProtocolDispatcher dispatcher(url, user, pw);
-        dispatcher.dispatch();
-    } catch (const std::exception&) {
-        log_info("Unfortunately an error has occured :(. For more information read "
-                 "error messages above.");
-        std::exit(-1);
+    for (auto&& url: urls) {
+        try {
+            ProtocolDispatcher dispatcher(url, user, pw);
+            dispatcher.dispatch();
+        } catch (const std::exception&) {
+            log_info("Unfortunately an error has occured :(. For more information read "
+                     "error messages above.");
+            std::exit(-1);
+        }
     }
 
     return 0;
