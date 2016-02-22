@@ -1,3 +1,5 @@
+#include <libgen.h>
+
 #include "tcp_connection.h"
 #include "tcp_ssl_connection.h"
 #include "url_parser.h"
