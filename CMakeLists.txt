@@ -31,6 +31,7 @@ pkg_search_module(OPENSSL REQUIRED openssl>=1.0.2)
 
 if (OPENSSL_FOUND)
   include_directories(${OPENSSL_INCLUDE_DIRS})
+  link_directories(${OPENSSL_LIBRARY_DIRS})
   message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
 endif()
 
@@ -38,6 +39,7 @@ endif()
 pkg_search_module(LIBSSH2 REQUIRED libssh2)
 if (LIBSSH2_FOUND)
   include_directories(${LIBSSH2_INCLUDE_DIRS})
+  link_directories(${LIBSSH2_LIBRARY_DIRS})
   message(STATUS "Using LibSSH2 ${LIBSSH2_VERSION}")
 endif()
 
