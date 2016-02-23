@@ -10,7 +10,7 @@ std::pair<double, std::string> ProgressBar::unit(std::size_t file_size,
                                                  unsigned precision) const
 {
     const std::array<std::string, 5> units = {
-        "B", "KiB", "MiB", "GiB", "TiB"
+        { "B" , "KiB", "MiB", "GiB", "TiB" }
     };
 
     int i = 0;
