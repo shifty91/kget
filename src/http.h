@@ -94,9 +94,8 @@ private:
             throw RedirectException(url);
         }
 
-        if (code == 401) {
-            throw AuthException(""); // FIXME
-        }
+        if (code == 401)
+            throw AuthException();
 
         if (code != 200)
             EXCEPTION("Received unexpected response code from server: " << code);
