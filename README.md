@@ -7,12 +7,15 @@ the same thing as BSD's fetch.
 
 ## Usage ##
 
-    usage: get [options] <url>
+    usage: get [options] <url> [more urls]
       options:
         -p       : show progressbar if available
         -u <user>: username
         -k <pw>  : password
         -f       : do not follow HTTP redirects
+        -v       : verify server's SSL certificate
+        -2       : use SSL version 2
+        -3       : use SSL version 3
 
 Supported right now:
 
@@ -39,7 +42,7 @@ Example:
 
 ## Author ##
 
-Copyright (C) 2015 Kurt Kanzenbach <kurt@kmk-computers.de>
+Copyright (C) 2015-2016 Kurt Kanzenbach <kurt@kmk-computers.de>
 
 ## License ##
 
