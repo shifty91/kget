@@ -9,13 +9,13 @@ the same thing as BSD's fetch.
 
     usage: get [options] <url> [more urls]
       options:
-        -p       : show progressbar if available
-        -u <user>: username
-        -k <pw>  : password
-        -f       : do not follow HTTP redirects
-        -v       : verify server's SSL certificate
-        -2       : use SSL version 2
-        -3       : use SSL version 3
+        --progress, -p   : show progressbar if available
+        --user, -u <user>: username
+        --pass, -k <pw>  : password
+        --follow, -f     : do not follow HTTP redirects
+        --verify, -v     : verify server's SSL certificate
+        --sslv2, -2      : use SSL version 2
+        --sslv3, -3      : use SSL version 3
 
 Supported right now:
 

@@ -10,25 +10,36 @@
 #include <vector>
 #include <cstdlib>
 #include <libgen.h>
-
 #include <unistd.h>
+#include <getopt.h>
 
 #include "config.h"
 #include "protocol_dispatcher.h"
 #include "logger.h"
+
+static struct option long_opts[] = {
+    { "progress", no_argument,       NULL, 'p' },
+    { "user",     required_argument, NULL, 'u' },
+    { "pass",     required_argument, NULL, 'k' },
+    { "follow",   no_argument,       NULL, 'f' },
+    { "verify",   no_argument,       NULL, 'v' },
+    { "sslv2",    no_argument,       NULL, '2' },
+    { "sslv3",    no_argument,       NULL, '3' },
+    { NULL,       0,                 NULL,  0  }
+};
 
 static inline
 void print_usage_and_die()
 {
     std::cerr << "usage: get [options] <url> [more urls]" << std::endl;
     std::cerr << "  options:" << std::endl;
-    std::cerr << "    -p       : show progressbar if available" << std::endl;
-    std::cerr << "    -u <user>: username" << std::endl;
-    std::cerr << "    -k <pw>  : password" << std::endl;
-    std::cerr << "    -f       : do not follow HTTP redirects" << std::endl;
-    std::cerr << "    -v       : verify server's SSL certificate" << std::endl;
-    std::cerr << "    -2       : use SSL version 2" << std::endl;
-    std::cerr << "    -3       : use SSL version 3" << std::endl;
+    std::cerr << "    --progress, -p   : show progressbar if available" << std::endl;
+    std::cerr << "    --user, -u <user>: username" << std::endl;
+    std::cerr << "    --pass, -k <pw>  : password" << std::endl;
+    std::cerr << "    --follow, -f     : do not follow HTTP redirects" << std::endl;
+    std::cerr << "    --verify, -v     : verify server's SSL certificate" << std::endl;
+    std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
+    std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
     std::cerr << "get version 1.2 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     std::exit(-1);
 }
@@ -38,14 +49,13 @@ int main(int argc, char *argv[])
     // parse args
     auto *config = Config::instance();
     std::vector<std::string> urls;
-    std::string user;
-    std::string pw;
+    std::string user, pw;
     int c;
 
     if (argc <= 1)
         print_usage_and_die();
 
-    while ((c = getopt(argc, argv, "23vpfu:k:")) != -1) {
+    while ((c = getopt_long(argc, argv, "23vpfu:k:", long_opts, NULL)) != -1) {
         switch (c) {
         case 'p':
             config->show_pg() = true;
