@@ -4,16 +4,19 @@
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
+#include <libgen.h>
 
 #define log_err(msg)                                                    \
     do {                                                                \
-        std::cerr << "[ERROR " << __FILE__ << ":" << __LINE__ << "]: " << msg << std::endl; \
+        std::cerr << "[ERROR " << basename(__FILE__) << ":" << __LINE__ \
+                  << "]: " << msg << std::endl;                         \
     } while (0)
 
 #ifndef NDEBUG
 #define log_dbg(msg)                                                    \
     do {                                                                \
-        std::cout << "[DEBUG " << __FILE__ << ":" << __LINE__ << "]: " << msg << std::endl; \
+        std::cout << "[DEBUG " << basename(__FILE__) << ":" << __LINE__ \
+                  << "]: " << msg << std::endl;                         \
     } while (0)
 #else
 #define log_dbg(msg)
@@ -21,7 +24,8 @@
 
 #define log_info(msg)                                                   \
     do {                                                                \
-        std::cout << "[INFO " << __FILE__ << ":" << __LINE__ << "]: " << msg << std::endl; \
+        std::cout << "[INFO " << basename(__FILE__) << ":" << __LINE__  \
+                  << "]: " << msg << std::endl;                         \
     } while (0)
 
 #define EXCEPTION_TYPE(type, msg)               \
