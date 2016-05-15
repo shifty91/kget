@@ -105,6 +105,9 @@ int FTPMethod::ftp_ret_code(const std::string& response) const
 {
     char a, b, c;
 
+    if (response.size() < 3)
+        EXCEPTION("Received garbage from FTP server.");
+
     a = response[0];
     b = response[1];
     c = response[2];
