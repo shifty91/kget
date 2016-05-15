@@ -10,6 +10,7 @@ the same thing as BSD's fetch.
     usage: get [options] <url> [more urls]
       options:
         --progress, -p   : show progressbar if available
+        --output, -o     : specify output file name
         --user, -u <user>: username
         --pass, -k <pw>  : password
         --follow, -f     : do not follow HTTP redirects

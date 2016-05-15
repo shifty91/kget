@@ -20,6 +20,7 @@ void ProtocolDispatcher::dispatch()
 
     while (42) {
         URLParser parser(m_url);
+        std::string name;
 
         parser.parse();
         log_dbg("Parsing results...");
@@ -27,9 +28,12 @@ void ProtocolDispatcher::dispatch()
         log_dbg("  Host: "   << parser.host()  );
         log_dbg("  Object: " << parser.object());
 
-        std::string name = basename(const_cast<char *>(parser.object().c_str()));
-        if (name == "")
-            EXCEPTION("URL does not have a valid object.");
+        if (m_output == "") {
+            name = basename(const_cast<char *>(parser.object().c_str()));
+            if (name == "")
+                EXCEPTION("URL does not have a valid object.");
+        } else
+            name = m_output;
 
         // here: catch only redirect|auth exceptions, everything else is just forwarded
         try {

@@ -25,6 +25,7 @@ static struct option long_opts[] = {
     { "verify",   no_argument,       NULL, 'v' },
     { "sslv2",    no_argument,       NULL, '2' },
     { "sslv3",    no_argument,       NULL, '3' },
+    { "output",   required_argument, NULL, 'o' },
     { NULL,       0,                 NULL,  0  }
 };
 
@@ -34,13 +35,14 @@ void print_usage_and_die()
     std::cerr << "usage: get [options] <url> [more urls]" << std::endl;
     std::cerr << "  options:" << std::endl;
     std::cerr << "    --progress, -p   : show progressbar if available" << std::endl;
+    std::cerr << "    --output, -o     : specify output file name" << std::endl;
     std::cerr << "    --user, -u <user>: username" << std::endl;
     std::cerr << "    --pass, -k <pw>  : password" << std::endl;
     std::cerr << "    --follow, -f     : do not follow HTTP redirects" << std::endl;
     std::cerr << "    --verify, -v     : verify server's SSL certificate" << std::endl;
     std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
     std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
-    std::cerr << "get version 1.2 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
+    std::cerr << "get version 1.3 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     std::exit(-1);
 }
 
@@ -49,13 +51,13 @@ int main(int argc, char *argv[])
     // parse args
     auto *config = Config::instance();
     std::vector<std::string> urls;
-    std::string user, pw;
+    std::string user, pw, output;
     int c;
 
     if (argc <= 1)
         print_usage_and_die();
 
-    while ((c = getopt_long(argc, argv, "23vpfu:k:", long_opts, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "23vpfu:k:o:", long_opts, NULL)) != -1) {
         switch (c) {
         case 'p':
             config->show_pg() = true;
@@ -78,6 +80,9 @@ int main(int argc, char *argv[])
         case '3':
             config->use_sslv3() = true;
             break;
+        case 'o':
+            output = optarg;
+            break;
         case '?':
         case ':':
             print_usage_and_die();
@@ -91,7 +96,7 @@ int main(int argc, char *argv[])
     // dispatch
     for (auto&& url: urls) {
         try {
-            ProtocolDispatcher dispatcher(url, user, pw);
+            ProtocolDispatcher dispatcher(url, user, pw, output);
             dispatcher.dispatch();
         } catch (const std::exception&) {
             log_info("Unfortunately an error has occured :(. For more information read "
