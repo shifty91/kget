@@ -83,8 +83,7 @@ int main(int argc, char *argv[])
         case 'o':
             output = optarg;
             break;
-        case '?':
-        case ':':
+        default:
             print_usage_and_die();
         }
     }
