@@ -6,17 +6,20 @@
 #include <sstream>
 #include <libgen.h>
 
+#define GET_BASENAME(str)                       \
+    (basename(const_cast<char *>(str)))
+
 #define log_err(msg)                                                    \
     do {                                                                \
-        std::cerr << "[ERROR " << basename(__FILE__) << ":" << __LINE__ \
-                  << "]: " << msg << std::endl;                         \
+        std::cerr << "[ERROR " << GET_BASENAME(__FILE__) << ":"         \
+                  << __LINE__ << "]: " << msg << std::endl;             \
     } while (0)
 
 #ifndef NDEBUG
 #define log_dbg(msg)                                                    \
     do {                                                                \
-        std::cout << "[DEBUG " << basename(__FILE__) << ":" << __LINE__ \
-                  << "]: " << msg << std::endl;                         \
+        std::cout << "[DEBUG " << GET_BASENAME(__FILE__) << ":"         \
+                  << __LINE__ << "]: " << msg << std::endl;             \
     } while (0)
 #else
 #define log_dbg(msg)
@@ -24,8 +27,8 @@
 
 #define log_info(msg)                                                   \
     do {                                                                \
-        std::cout << "[INFO " << basename(__FILE__) << ":" << __LINE__  \
-                  << "]: " << msg << std::endl;                         \
+        std::cout << "[INFO " << GET_BASENAME(__FILE__) << ":"          \
+                  << __LINE__ << "]: " << msg << std::endl;             \
     } while (0)
 
 #define EXCEPTION_TYPE(type, msg)               \
