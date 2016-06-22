@@ -12,6 +12,7 @@ private:
     void check_response(const std::string& line, int expected_response) const;
     std::size_t ftp_size(const std::string& line) const;
     int ftp_pasv_port(const std::string& line) const;
+    int ftp_epsv_port(const std::string& line) const;
 
 public:
     FTPMethod(const std::string& host, const std::string& object) :

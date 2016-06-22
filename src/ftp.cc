@@ -3,6 +3,7 @@
 #include <sstream>
 #include <regex>
 #include <fstream>
+#include <cstring>
 
 #include "ftp.h"
 #include "logger.h"
@@ -45,11 +46,26 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
         log_dbg("File has a size of " << len << " bytes.");
     }
 
-    // PASV
+    // PASV/EPSV
     tcp.write("PASV\r\n");
     line = tcp.read_ln();
-    check_response(line, 227);
-    pasv_port = ftp_pasv_port(line);
+    response = ftp_ret_code(line);
+
+    if (response == 227) {
+        pasv_port = ftp_pasv_port(line);
+    } else if (response == 501) {
+        // hmz, PASV might not be supported -> trying EPSV
+        tcp.write("EPSV\r\n");
+        line = tcp.read_ln();
+        check_response(line, 229);
+        pasv_port = ftp_epsv_port(line);
+    } else {
+        EXCEPTION("FTP server doesn't support PASV nor EPSV. Giving up.");
+    }
+
+    if (pasv_port < 0)
+        EXCEPTION("Failed to parse PASV port " << pasv_port);
+
     log_dbg("PASV p0rt is " << pasv_port);
 
     // connect to ftp data
@@ -99,6 +115,16 @@ int FTPMethod::ftp_pasv_port(const std::string& line) const
     }
 
     EXCEPTION("Failed to parse PASV port.");
+}
+
+int FTPMethod::ftp_epsv_port(const std::string& line) const
+{
+    // grr, stupid c++ regex, using c style parsing instead
+    for (decltype(line.size()) i = 0; i < line.size(); ++i)
+        if (!strncmp(line.c_str() + i, "|||", 3))
+            return std::atoi(line.c_str() + i + 3);
+
+    EXCEPTION("Failed to parse EPSV port.");
 }
 
 int FTPMethod::ftp_ret_code(const std::string& response) const
