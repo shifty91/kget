@@ -29,7 +29,7 @@ static struct option long_opts[] = {
     { NULL,       0,                 NULL,  0  }
 };
 
-static inline
+__attribute__((noreturn)) static inline
 void print_usage_and_die()
 {
     std::cerr << "usage: get [options] <url> [more urls]" << std::endl;

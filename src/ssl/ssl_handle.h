@@ -64,7 +64,7 @@ public:
         SSL_set_verify(m_ssl_handle, mode, verify_callback);
     }
 
-    inline int get_verify_result()
+    inline long get_verify_result()
     {
         return SSL_get_verify_result(m_ssl_handle);
     }

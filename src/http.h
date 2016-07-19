@@ -45,9 +45,8 @@ class HTTPMethod : public Method
 private:
     std::string build_http_request(const std::string& user, const std::string& pw) const
     {
-        std::stringstream ss;
-        std::string request;
-        std::string object(m_object);
+        std::stringstream request;
+        std::string object{m_object};
 
         if (m_object[0] != '/') {
             std::stringstream ss;
@@ -55,20 +54,20 @@ private:
             object = ss.str();
         }
 
-        ss << "GET " << object << " HTTP/1.1\r\n"
-           << "Host: " << m_host << "\r\n"
-           << "User-Agent: Kurts Get Program\r\n"
-           << "Connection: Close\r\n";
+        request << "GET "   << object << " HTTP/1.1\r\n"
+                << "Host: " << m_host << "\r\n"
+                << "User-Agent: Kurts Get Program\r\n"
+                << "Connection: Close\r\n";
         if (user != "") {
             std::stringstream auth;
             auth << user << ":" << pw;
             Base64 base64(auth.str());
-            ss << "Authorization: Basic "
-               << base64.encode() << "\r\n";
+            request << "Authorization: Basic "
+                    << base64.encode() << "\r\n";
         }
-        ss << "\r\n";
+        request << "\r\n";
 
-        return ss.str();
+        return request.str();
     }
 
     void check_response_code(const std::vector<std::string>& header) const

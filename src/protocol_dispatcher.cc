@@ -62,7 +62,7 @@ void ProtocolDispatcher::dispatch()
             }
             log_info("HTTP redirect detected. Following redirects disabled.");
             break;
-        } catch (const AuthException& ex) {
+        } catch (const AuthException&) {
             log_info("HTTP Authorization detected. Please provide your credentials: ");
             m_user = Utils::user_input("Username");
             m_pw   = Utils::user_input_pw("Password");

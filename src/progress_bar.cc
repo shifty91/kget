@@ -9,14 +9,14 @@
 std::pair<double, std::string> ProgressBar::unit(std::size_t file_size,
                                                  unsigned precision) const
 {
-    const std::array<std::string, 5> units = {
+    static const std::array<std::string, 5> units = {
         { "B" , "KiB", "MiB", "GiB", "TiB" }
     };
 
-    int i = 0;
+    std::array<std::string, 5>::size_type i = 0;
     double size = file_size;
-    while (size >= 1024) {
-        size /= 1024;
+    while (size >= 1024.0) {
+        size /= 1024.0;
         ++i;
     }
     assert(static_cast<decltype(units.size())>(i) < units.size());

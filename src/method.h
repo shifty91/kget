@@ -19,6 +19,9 @@ public:
         m_host{host}, m_object{object}
     {}
 
+    virtual ~Method()
+    {}
+
     virtual void get(const std::string& fileToSave, const std::string& user = "",
                      const std::string& pw = "") const = 0;
 };

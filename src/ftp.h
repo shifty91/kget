@@ -19,6 +19,9 @@ public:
         Method(host, object)
     {}
 
+    virtual ~FTPMethod()
+    {}
+
     virtual void get(const std::string& fileToSave, const std::string& user = "",
                      const std::string& pw = "") const override;
 };
