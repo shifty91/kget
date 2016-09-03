@@ -15,7 +15,7 @@ int NetUtils::tcp_connect(const char *host, const char *service)
 
     std::memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
-    // prefere IPv6
+    // prefer IPv6
     hints.ai_family = PF_UNSPEC;
     hints.ai_flags  = AI_ADDRCONFIG;
 
