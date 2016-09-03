@@ -8,8 +8,10 @@ class FTPMethod : Method
 {
 private:
     int ftp_ret_code(const std::string& response) const;
-    void check_response(const TCPConnection& tcp, int expected_response) const;
-    void check_response(const std::string& line, int expected_response) const;
+    void check_response(const TCPConnection& tcp, int expected_response,
+                        const std::string& file = "", int line = 0) const;
+    void check_response(const std::string& line, int expected_response,
+                        const std::string& file = "", int src_line = 0) const;
     std::size_t ftp_size(const std::string& line) const;
     int ftp_pasv_port(const std::string& line) const;
     int ftp_epsv_port(const std::string& line) const;

@@ -9,6 +9,11 @@
 #include "logger.h"
 #include "config.h"
 
+#define CHECK_RESPONSE(tcp, response)                       \
+    do {                                                    \
+        check_response(tcp, response, __FILE__, __LINE__);  \
+    } while (0)
+
 void FTPMethod::get(const std::string& fileToSave, const std::string& user,
                     const std::string& pw) const
 {
@@ -18,24 +23,24 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
     Config *config = Config::instance();
 
     tcp.connect(m_host, "ftp");
-    check_response(tcp, 220);
+    CHECK_RESPONSE(tcp, 220);
 
     if (user == "")
         tcp.write("USER anonymous\r\n");
     else
         TCP_WRITE(tcp, "USER " << user << "\r\n");
-    check_response(tcp, 331);
+    CHECK_RESPONSE(tcp, 331);
     if (pw == "")
         tcp.write("PASS asdf\r\n");
     else
         TCP_WRITE(tcp, "PASS " << pw << "\r\n");
-    check_response(tcp, 230);
+    CHECK_RESPONSE(tcp, 230);
 
     log_dbg("Logged into FTP server at " << m_host);
 
     // change to binary mode
     tcp.write("TYPE I\r\n");
-    check_response(tcp, 200);
+    CHECK_RESPONSE(tcp, 200);
 
     // get size
     TCP_WRITE(tcp, "SIZE " << m_object << "\r\n");
@@ -57,7 +62,7 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
         // hmz, PASV might not be supported -> trying EPSV
         tcp.write("EPSV\r\n");
         line = tcp.read_ln();
-        check_response(line, 229);
+        CHECK_RESPONSE(line, 229);
         pasv_port = ftp_epsv_port(line);
     } else {
         EXCEPTION("FTP server doesn't support PASV nor EPSV. Giving up.");
@@ -73,7 +78,7 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
 
     // get file
     TCP_WRITE(tcp, "RETR " << m_object << "\r\n");
-    check_response(tcp, 150);
+    CHECK_RESPONSE(tcp, 150);
 
     // fetch it and save to file
     std::ofstream ofs(fileToSave);
@@ -86,9 +91,9 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
     tcp_pasv.close();
 
     // done
-    check_response(tcp, 226);
+    CHECK_RESPONSE(tcp, 226);
     tcp.write("QUIT\r\n");
-    check_response(tcp, 221);
+    CHECK_RESPONSE(tcp, 221);
 }
 
 std::size_t FTPMethod::ftp_size(const std::string& line) const
@@ -144,16 +149,19 @@ int FTPMethod::ftp_ret_code(const std::string& response) const
     return (a-'0')*100 + (b-'0')*10 + (c-'0');
 }
 
-void FTPMethod::check_response(const TCPConnection& tcp, int expected_response) const
+void FTPMethod::check_response(const TCPConnection& tcp, int expected_response,
+                               const std::string& file, int line) const
 {
-    check_response(tcp.read_ln(), expected_response);
+    check_response(tcp.read_ln(), expected_response, file, line);
 }
 
-void FTPMethod::check_response(const std::string& line, int expected_response) const
+void FTPMethod::check_response(const std::string& line, int expected_response,
+                               const std::string& file, int src_line) const
 {
     auto response = ftp_ret_code(line);
 
     if (response != expected_response)
         EXCEPTION("Received unexpected response code from FTP server " << response <<
-                  " while " << expected_response << " was expected.");
+                  " while " << expected_response << " was expected.\n"
+                  "Origin of failure: " << file << ":" << src_line);
 }
