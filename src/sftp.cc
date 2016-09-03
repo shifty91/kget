@@ -1,6 +1,7 @@
 #include <iomanip>
 #include <array>
 #include <iostream>
+#include <sstream>
 
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -24,28 +25,18 @@ KeyPairVector SFTPMethod::find_user_keys() const
         return { };
     }
 
-    std::array<std::string, 2> publickeys;
-    publickeys[0] = home;
-    publickeys[0] += "/";
-    publickeys[0] += ".ssh/id_rsa.pub";
-    publickeys[1] = home;
-    publickeys[1] += "/";
-    publickeys[1] += ".ssh/id_dsa.pub";
-
-    std::array<std::string, 2> privatekeys;
-    privatekeys[0] = home;
-    privatekeys[0] += "/";
-    privatekeys[0] += ".ssh/id_rsa";
-    privatekeys[1] = home;
-    privatekeys[1] += "/";
-    privatekeys[1] += ".ssh/id_dsa";
+    const std::array<std::string, 2> publickeys = {
+        { home + "/.ssh/id_rsa.pub", home + "/.ssh/id_dsa.pub" }
+    };
+    const std::array<std::string, 2> privatekeys = {
+        { home + "/.ssh/id_rsa", home + "/.ssh/id_dsa" }
+    };
 
     auto len = publickeys.size();
-    for (decltype(len) i = 0; i < len; ++i) {
+    for (decltype(len) i = 0; i < len; ++i)
         if (Utils::file_exists(publickeys[i]) &&
             Utils::file_exists(privatekeys[i]))
             keys.emplace_back(publickeys[i], privatekeys[i]);
-    }
 
     return keys;
 }
