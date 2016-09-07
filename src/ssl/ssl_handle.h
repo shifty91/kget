@@ -53,18 +53,19 @@ public:
         m_connected = true;
     }
 
-    inline void set_fd(int socket)
+    inline void set_fd(int socket) const
     {
         if (!SSL_set_fd(m_ssl_handle, socket))
             GET_SSL_EXCEPTION("SSL_set_fd() failed.");
     }
 
-    inline void set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *))
+    inline void
+    set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *)) const
     {
         SSL_set_verify(m_ssl_handle, mode, verify_callback);
     }
 
-    inline long get_verify_result()
+    inline long get_verify_result() const
     {
         return SSL_get_verify_result(m_ssl_handle);
     }
@@ -72,6 +73,16 @@ public:
     inline SSL *handle() const
     {
         return m_ssl_handle;
+    }
+
+    inline int read(void *buffer, int size) const
+    {
+        return SSL_read(m_ssl_handle, buffer, size);
+    }
+
+    inline int write(void *buffer, int size) const
+    {
+        return SSL_write(m_ssl_handle, buffer, size);
     }
 };
 

@@ -84,7 +84,7 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp <= 0)
             EXCEPTION("SSL_read() failed");
         result.insert(read, buffer, tmp);
@@ -106,7 +106,7 @@ std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -131,7 +131,7 @@ std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp == -1)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -152,7 +152,7 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
         EXCEPTION("Not connected!");
 
     while (42) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -170,7 +170,7 @@ void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std
         EXCEPTION("Not connected!");
 
     while (42) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, sizeof(buffer));
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp < 0)
             EXCEPTION("SSL_read() failed.");
         if (tmp == 0)
@@ -191,7 +191,7 @@ std::string TCPSSLConnection::read_ln() const
 
     // FIXME: This is kind of slow
     while (42) {
-        int tmp = SSL_read(m_ssl_handle.handle(), buffer, 1);
+        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
         if (tmp == -1)
             EXCEPTION("SSL_read() failed.");
         result.insert(read, buffer, tmp);
