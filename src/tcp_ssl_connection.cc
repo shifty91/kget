@@ -192,8 +192,10 @@ std::string TCPSSLConnection::read_ln() const
     // FIXME: This is kind of slow
     while (42) {
         auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
-        if (tmp == -1)
+        if (tmp < 0)
             EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+        if (tmp == 0)
+            EXCEPTION("SSL_read() in read_ln() encountered EOF");
         result.insert(read, buffer, tmp);
         read += tmp;
 

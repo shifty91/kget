@@ -159,8 +159,10 @@ std::string TCPConnection::read_ln() const
     // FIXME: This is kind of slow...
     while (42) {
         auto tmp = ::read(m_sock, buffer, 1);
-        if (tmp == -1)
+        if (tmp < 0)
             EXCEPTION("read() to socket failed: " << strerror(errno));
+        if (tmp == 0)
+            EXCEPTION("read() in read_ln() encountered EOF");
         result.insert(read, buffer, tmp);
         read += tmp;
 
