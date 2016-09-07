@@ -80,9 +80,33 @@ public:
         return SSL_read(m_ssl_handle, buffer, size);
     }
 
-    inline int write(void *buffer, int size) const
+    inline int write(const void *buffer, int size) const
     {
         return SSL_write(m_ssl_handle, buffer, size);
+    }
+
+    inline auto get_error(int ret) const
+    {
+        return SSL_get_error(m_ssl_handle, ret);
+    }
+
+    inline std::string str_error(int ret) const
+    {
+        auto code = get_error(ret);
+#define _(code) case code: return #code
+        switch (code) {
+            _(SSL_ERROR_NONE);
+            _(SSL_ERROR_ZERO_RETURN);
+            _(SSL_ERROR_WANT_READ);
+            _(SSL_ERROR_WANT_WRITE);
+            _(SSL_ERROR_WANT_CONNECT);
+            _(SSL_ERROR_WANT_ACCEPT);
+            _(SSL_ERROR_WANT_X509_LOOKUP);
+            _(SSL_ERROR_SYSCALL);
+            _(SSL_ERROR_SSL);
+        }
+#undef _
+        return "Unknown SSL error ocurred";
     }
 };
 
