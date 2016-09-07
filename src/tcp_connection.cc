@@ -6,6 +6,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -51,7 +52,8 @@ std::string TCPConnection::read(std::size_t numBytes) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        auto tmp = ::read(m_sock, buffer, sizeof(buffer));
+        auto len = std::min(sizeof(buffer), numBytes - static_cast<std::size_t>(read));
+        auto tmp = ::read(m_sock, buffer, len);
         if (tmp < 0)
             EXCEPTION("read() to socket failed: " << strerror(errno));
         if (tmp == 0)

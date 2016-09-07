@@ -7,6 +7,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -83,7 +84,8 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        auto tmp = m_ssl.read(buffer, sizeof(buffer));
+        auto len = std::min(sizeof(buffer), numBytes - static_cast<int>(read));
+        auto tmp = m_ssl.read(buffer, len);
         if (tmp <= 0)
             EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         result.insert(read, buffer, tmp);
