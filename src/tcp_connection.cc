@@ -52,8 +52,10 @@ std::string TCPConnection::read(std::size_t numBytes) const
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
-        if (tmp == -1)
+        if (tmp < 0)
             EXCEPTION("read() to socket failed: " << strerror(errno));
+        if (tmp == 0)
+            EXCEPTION("read() encountered EOF");
         result.insert(read, buffer, tmp);
         read += tmp;
     }
