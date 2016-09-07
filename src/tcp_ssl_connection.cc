@@ -15,11 +15,10 @@
 
 #include <openssl/x509v3.h>
 
+bool TCPSSLConnection::m_ssl_initialized = false;
+
 void TCPSSLConnection::init_ssl(const std::string& host)
 {
-    SSL_load_error_strings();
-    SSL_library_init();
-
     m_ssl_ctx.context_new(SSLv23_client_method());
     if (!Config::instance()->use_sslv2())
         m_ssl_ctx.set_options(SSL_OP_NO_SSLv2);
