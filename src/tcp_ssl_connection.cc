@@ -20,28 +20,28 @@ void TCPSSLConnection::init_ssl(const std::string& host)
     SSL_load_error_strings();
     SSL_library_init();
 
-    m_ssl_context.context_new(SSLv23_client_method());
+    m_ssl_ctx.context_new(SSLv23_client_method());
     if (!Config::instance()->use_sslv2())
-        m_ssl_context.set_options(SSL_OP_NO_SSLv2);
+        m_ssl_ctx.set_options(SSL_OP_NO_SSLv2);
     if (!Config::instance()->use_sslv3())
-        m_ssl_context.set_options(SSL_OP_NO_SSLv3);
+        m_ssl_ctx.set_options(SSL_OP_NO_SSLv3);
 
-    m_ssl_context.set_cipher_list("HIGH:MEDIUM:!RC4:!SRP:!PSK:!MD5:!aNULL@STRENGTH");
-    m_ssl_context.set_default_verify_paths();
+    m_ssl_ctx.set_cipher_list("HIGH:MEDIUM:!RC4:!SRP:!PSK:!MD5:!aNULL@STRENGTH");
+    m_ssl_ctx.set_default_verify_paths();
 
-    m_ssl_handle.ssl_new(m_ssl_context);
-    m_ssl_handle.set_fd(m_sock);
+    m_ssl.ssl_new(m_ssl_ctx);
+    m_ssl.set_fd(m_sock);
 
     // verify certificate
     if (Config::instance()->verify_peer()) {
         X509_VERIFY_PARAM *param;
-        param = SSL_get0_param(m_ssl_handle.handle());
+        param = SSL_get0_param(m_ssl.handle());
 
         X509_VERIFY_PARAM_set_hostflags(param, X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
         X509_VERIFY_PARAM_set1_host(param, host.c_str(), 0);
-        m_ssl_handle.set_verify(SSL_VERIFY_PEER, nullptr);
+        m_ssl.set_verify(SSL_VERIFY_PEER, nullptr);
     }
-    m_ssl_handle.connect();
+    m_ssl.connect();
 }
 
 void TCPSSLConnection::connect(const std::string& host, int port)
@@ -67,9 +67,9 @@ void TCPSSLConnection::write(const std::string& toWrite) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(len)>(written) < len) {
-        auto tmp = m_ssl_handle.write(start + written, len - written);
+        auto tmp = m_ssl.write(start + written, len - written);
         if (tmp <= 0)
-            EXCEPTION("SSL_write() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_write() failed: " << m_ssl.str_error(tmp));
         written += tmp;
     }
 }
@@ -84,9 +84,9 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
         EXCEPTION("Not connected!");
 
     while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp <= 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         result.insert(read, buffer, tmp);
         read += tmp;
     }
@@ -106,9 +106,9 @@ std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -131,9 +131,9 @@ std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t fileSize) const
     if (fileSize > 0)
         result.reserve(fileSize);
     while (42) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -152,9 +152,9 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
         EXCEPTION("Not connected!");
 
     while (42) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -170,9 +170,9 @@ void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std
         EXCEPTION("Not connected!");
 
     while (42) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -191,9 +191,9 @@ std::string TCPSSLConnection::read_ln() const
 
     // FIXME: This is kind of slow
     while (42) {
-        auto tmp = m_ssl_handle.read(buffer, sizeof(buffer));
+        auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl_handle.str_error(tmp));
+            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
         if (tmp == 0)
             EXCEPTION("SSL_read() in read_ln() encountered EOF");
         result.insert(read, buffer, tmp);

@@ -18,8 +18,8 @@
 class TCPSSLConnection : public Connection
 {
 private:
-    SSLHandle m_ssl_handle;
-    SSLContext m_ssl_context;
+    SSLHandle m_ssl;
+    SSLContext m_ssl_ctx;
 
     void init_ssl(const std::string& host);
 
