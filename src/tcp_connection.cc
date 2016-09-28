@@ -21,7 +21,7 @@ void TCPConnection::connect(const std::string& host, int port)
 void TCPConnection::connect(const std::string& host, const std::string& service)
 {
     close();
-    m_sock = NetUtils::tcp_connect(host.c_str(), service.c_str());
+    m_sock = NetUtils::tcp_connect(host, service);
     m_connected = true;
 }
 

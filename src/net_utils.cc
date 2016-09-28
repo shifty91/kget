@@ -7,7 +7,7 @@
 #include "logger.h"
 #include "net_utils.h"
 
-int NetUtils::tcp_connect(const char *host, const char *service)
+int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 {
     int res;
     int sock;
@@ -19,7 +19,7 @@ int NetUtils::tcp_connect(const char *host, const char *service)
     hints.ai_family = PF_UNSPEC;
     hints.ai_flags  = AI_ADDRCONFIG;
 
-    res = getaddrinfo(host, service, &hints, &sa_head);
+    res = getaddrinfo(host.c_str(), service.c_str(), &hints, &sa_head);
     if (res)
         EXCEPTION("getaddrinfo() for host " << host << " failed: " << gai_strerror(res));
 
