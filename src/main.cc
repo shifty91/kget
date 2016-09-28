@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
         print_usage_and_die();
     for (auto i = optind; i < argc; ++i)
         urls.emplace_back(argv[i]);
+    if (urls.size() > 1 && output.size() > 0)
+        print_usage_and_die();
 
     // dispatch
     for (auto&& url: urls) {
