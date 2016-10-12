@@ -17,6 +17,7 @@ the same thing as BSD's fetch.
         --verify, -v     : verify server's SSL certificate
         --sslv2, -2      : use SSL version 2
         --sslv3, -3      : use SSL version 3
+        --debug, -d      : enable debug output
 
 Supported right now:
 
