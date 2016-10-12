@@ -26,6 +26,7 @@ static struct option long_opts[] = {
     { "sslv2",    no_argument,       NULL, '2' },
     { "sslv3",    no_argument,       NULL, '3' },
     { "output",   required_argument, NULL, 'o' },
+    { "debug",    no_argument,       NULL, 'd' },
     { NULL,       0,                 NULL,  0  }
 };
 
@@ -42,6 +43,7 @@ void print_usage_and_die()
     std::cerr << "    --verify, -v     : verify server's SSL certificate" << std::endl;
     std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
     std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
+    std::cerr << "    --debug, -d      : enable debug output" << std::endl;
     std::cerr << "get version 1.3 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
     std::exit(-1);
 }
@@ -57,7 +59,7 @@ int main(int argc, char *argv[])
     if (argc <= 1)
         print_usage_and_die();
 
-    while ((c = getopt_long(argc, argv, "23vpfu:k:o:", long_opts, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "23dvpfu:k:o:", long_opts, NULL)) != -1) {
         switch (c) {
         case 'p':
             config->show_pg() = true;
@@ -82,6 +84,9 @@ int main(int argc, char *argv[])
             break;
         case 'o':
             output = optarg;
+            break;
+        case 'd':
+            config->debug() = true;
             break;
         default:
             print_usage_and_die();
