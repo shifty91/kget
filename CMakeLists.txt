@@ -43,6 +43,13 @@ if (LIBSSH2_FOUND)
   message(STATUS "Using LibSSH2 ${LIBSSH2_VERSION}")
 endif()
 
+# search for backtrace
+find_package(Backtrace)
+if (NOT Backtrace_FOUND)
+  message(FATAL_ERROR "Backtrace not found")
+endif()
+include_directories(${Backtrace_INCLUDE_DIRS})
+
 # Termios.h
 include(CheckIncludeFiles)
 check_include_files("termios.h" HAVE_TERMIOS_H)
@@ -54,4 +61,5 @@ include_directories("src" "src/ssl" "src/ssh")
 add_executable(get ${SRCS})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})
+target_link_libraries(get ${Backtrace_LIBRARIES})
 install(TARGETS get DESTINATION bin COMPONENT binaries)
