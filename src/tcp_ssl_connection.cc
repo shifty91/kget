@@ -35,7 +35,7 @@
 
 #include <openssl/x509v3.h>
 
-bool TCPSSLConnection::m_ssl_initialized = false;
+SSLInit TCPSSLConnection::m_ssl_init;
 
 void TCPSSLConnection::init_ssl(const std::string& host)
 {

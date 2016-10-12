@@ -17,13 +17,23 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SSH_WRAPPER_H_
-#define _SSH_WRAPPER_H_
+#ifndef _SSL_INIT_H_
+#define _SSL_INIT_H_
 
-#include "ssh/ssh_init.h"
-#include "ssh/ssh_session.h"
-#include "ssh/sftp_session.h"
-#include "ssh/sftp_handle.h"
-#include "ssh/ssh_utilities.h"
+#include <openssl/ssl.h>
 
-#endif /* _SSH_WRAPPER_H_ */
+/**
+ * This class is responsible for initializing the OpenSSL
+ * library. There should only be exactly one instance of this class.
+ */
+class SSLInit
+{
+public:
+    inline SSLInit()
+    {
+        SSL_load_error_strings();
+        SSL_library_init();
+    }
+};
+
+#endif /* _SSL_INIT_H_ */

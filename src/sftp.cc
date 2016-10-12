@@ -22,15 +22,14 @@
 #include <iostream>
 #include <sstream>
 
-#include <libssh2.h>
-#include <libssh2_sftp.h>
-
 #include "tcp_connection.h"
 #include "logger.h"
 #include "utils.h"
 #include "progress_bar.h"
 
 #include "sftp.h"
+
+SSHInit SFTPMethod::m_ssh_init;
 
 KeyPairVector SFTPMethod::find_user_keys() const
 {
@@ -111,9 +110,6 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     tcp.connect(m_host, "ssh");
     sock = tcp.socket();
 
-    if (libssh2_init(0))
-        EXCEPTION("libssh2_init() failed.");
-
     session.set_blocking(true);
     session.handshake(sock);
 
@@ -169,7 +165,4 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
         ofs.write(buffer, read);
         pg.update(read);
     }
-
-    // shutdown libssh2
-    libssh2_exit();
 }

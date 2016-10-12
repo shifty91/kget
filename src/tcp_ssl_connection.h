@@ -37,29 +37,16 @@
 class TCPSSLConnection : public Connection
 {
 private:
-    static bool m_ssl_initialized;
+    static SSLInit m_ssl_init;
     SSLHandle m_ssl;
     SSLContext m_ssl_ctx;
 
     void init_ssl(const std::string& host);
 
-    inline void init_ssl_library()
-    {
-        if (m_ssl_initialized)
-            return;
-
-        SSL_load_error_strings();
-        SSL_library_init();
-
-        m_ssl_initialized = true;
-    }
-
 public:
     TCPSSLConnection() :
         Connection()
-    {
-        init_ssl_library();
-    }
+    {}
 
     ~TCPSSLConnection()
     {

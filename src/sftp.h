@@ -33,6 +33,8 @@ using KeyPairVector = std::vector<std::pair<std::string, std::string> >;
 class SFTPMethod : Method
 {
 private:
+    static SSHInit m_ssh_init;
+
     KeyPairVector find_user_keys() const;
     void print_fingerprint(const std::string& fingerprint) const;
     void publickey_auth(SSHSession& session, const std::string& user) const;

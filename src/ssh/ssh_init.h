@@ -17,13 +17,30 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SSH_WRAPPER_H_
-#define _SSH_WRAPPER_H_
+#ifndef _SSH_INIT_H_
+#define _SSH_INIT_H_
 
-#include "ssh/ssh_init.h"
-#include "ssh/ssh_session.h"
-#include "ssh/sftp_session.h"
-#include "ssh/sftp_handle.h"
-#include "ssh/ssh_utilities.h"
+#include <libssh2.h>
 
-#endif /* _SSH_WRAPPER_H_ */
+#include "logger.h"
+
+/**
+ * This class is responsible for initializing the LibSSH2
+ * library. There should only be exactly one instance of this class.
+ */
+class SSHInit
+{
+public:
+    inline SSHInit()
+    {
+        if (libssh2_init(0))
+            EXCEPTION("libssh2_init() failed.");
+    }
+
+    inline ~SSHInit()
+    {
+        libssh2_exit();
+    }
+};
+
+#endif /* _SSH_INIT_H_ */
