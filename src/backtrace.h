@@ -54,7 +54,7 @@ public:
             free(m_strings);
     }
 
-    inline void print_bt()
+    inline void print_bt() const
     {
         if (m_size == 0 || !m_strings)
             return;
