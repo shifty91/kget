@@ -178,9 +178,16 @@ void FTPMethod::check_response(const std::string& line, int expected_response,
                                const std::string& file, int src_line) const
 {
     auto response = ftp_ret_code(line);
+    auto config   = Config::instance();
 
-    if (response != expected_response)
-        EXCEPTION("Received unexpected response code from FTP server " << response <<
-                  " while " << expected_response << " was expected.\n"
-                  "Origin of failure: " << file << ":" << src_line);
+    if (response == expected_response)
+        return;
+
+    if (unlikely(config->debug()))
+        EXCEPTION("Received unexpected response code from FTP server " << response
+                  << " while " << expected_response << " was expected.\n"
+                  << "  Origin of failure: " << file << ":" << src_line);
+    else
+        EXCEPTION("Received unexpected response code from FTP server " << response
+                  << " while " << expected_response << " was expected.");
 }
