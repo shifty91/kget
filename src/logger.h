@@ -39,10 +39,8 @@
         std::stringstream ss;                           \
         ss << msg;                                      \
         log_err(ss.str());                              \
-        if (unlikely(Config::instance()->debug())) {    \
-            BackTrace bt;                               \
-            bt.print_bt();                              \
-        }                                               \
+        if (unlikely(Config::instance()->debug()))      \
+            BackTrace().print_bt();                     \
         throw std::type(ss.str());                      \
     } while (0)
 
