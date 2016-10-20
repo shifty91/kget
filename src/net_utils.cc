@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2015-2016 Kurt Kanzenbach <kurt@kmk-computers.de>
  *
@@ -43,11 +44,12 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
         EXCEPTION("getaddrinfo() for host " << host << " failed: " << gai_strerror(res));
 
     // try to connect to some record...
-    for (sa = sa_head; sa != NULL; sa = sa->ai_next) {
+    for (sa = sa_head; sa; sa = sa->ai_next) {
         sock = socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
         if (sock < 0) {
-            log_err("socket() failed: " << strerror(errno));
-            goto out;
+            log_dbg("socket() failed: " << strerror(errno) <<
+                    ". Trying next address.");
+            continue;
         }
 
         if (!connect(sock, sa->ai_addr, sa->ai_addrlen))
@@ -55,13 +57,11 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 
         close(sock);
     }
+    freeaddrinfo(sa_head);
 
     if (!sa)
         EXCEPTION("connect() for host " << host << " on service " << service <<
                   " failed: " << strerror(errno));
-
-out:
-    freeaddrinfo(sa_head);
 
     return sock;
 }
