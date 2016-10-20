@@ -39,11 +39,13 @@ static struct option long_opts[] = {
     { "sslv3",    no_argument,       NULL, '3' },
     { "output",   required_argument, NULL, 'o' },
     { "debug",    no_argument,       NULL, 'd' },
+    { "version",  no_argument,       NULL, 'x' },
+    { "help",     no_argument,       NULL, 'h' },
     { NULL,       0,                 NULL,  0  }
 };
 
 [[noreturn]] static inline
-void print_usage_and_die()
+void print_usage_and_die(int die)
 {
     std::cerr << "usage: get [options] <url> [more urls]" << std::endl;
     std::cerr << "  options:" << std::endl;
@@ -57,7 +59,7 @@ void print_usage_and_die()
     std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
     std::cerr << "    --debug, -d      : enable debug output" << std::endl;
     std::cerr << "get version 1.4 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
-    std::exit(-1);
+    std::exit(die ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
     int c;
 
     if (argc <= 1)
-        print_usage_and_die();
+        print_usage_and_die(1);
 
     while ((c = getopt_long(argc, argv, "23dvpfu:k:o:", long_opts, NULL)) != -1) {
         switch (c) {
@@ -100,16 +102,19 @@ int main(int argc, char *argv[])
         case 'd':
             config->debug() = true;
             break;
+        case 'x':
+        case 'h':
+            print_usage_and_die(0);
         default:
-            print_usage_and_die();
+            print_usage_and_die(1);
         }
     }
     if (optind >= argc)
-        print_usage_and_die();
+        print_usage_and_die(1);
     for (auto i = optind; i < argc; ++i)
         urls.emplace_back(argv[i]);
     if (urls.size() > 1 && output.size() > 0)
-        print_usage_and_die();
+        print_usage_and_die(1);
 
     // dispatch
     for (auto&& url: urls) {
