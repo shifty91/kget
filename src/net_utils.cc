@@ -19,13 +19,42 @@
  */
 
 #include <cstring>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 #include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "logger.h"
 #include "net_utils.h"
+
+void NetUtils::print_ip(const struct addrinfo *sa)
+{
+    char addr[INET6_ADDRSTRLEN + 1];
+    const char *res = NULL;
+    void *in_addr = NULL;
+
+    if (!sa)
+        return;
+
+    switch (sa->ai_family) {
+    case AF_INET6:
+        in_addr = &(((struct sockaddr_in6 *)sa->ai_addr)->sin6_addr);
+        break;
+    case AF_INET:
+        in_addr = &(((struct sockaddr_in *)sa->ai_addr)->sin_addr);
+        break;
+    }
+
+    if (!in_addr)
+        return;
+
+    res = inet_ntop(sa->ai_family, in_addr, addr, sizeof(addr));
+    if (!res) {
+        log_dbg("inet_ntop() failed: " << strerror(errno));
+        return;
+    }
+
+    log_dbg("Remote IP '" << addr << "'");
+}
 
 int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 {
@@ -52,8 +81,10 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
             continue;
         }
 
-        if (!connect(sock, sa->ai_addr, sa->ai_addrlen))
+        if (!connect(sock, sa->ai_addr, sa->ai_addrlen)) {
+            print_ip(sa);
             break;
+        }
 
         close(sock);
     }

@@ -21,12 +21,17 @@
 #define _NET_UTILS_H_
 
 #include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 /**
  * This class provides networking utilities for the tcp connections.
  */
 class NetUtils
 {
+private:
+    static void print_ip(const struct addrinfo *sa);
 public:
     static int tcp_connect(const std::string& host, const std::string& service);
 };
