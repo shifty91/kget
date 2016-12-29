@@ -8,6 +8,7 @@
 
 #include "config.h"
 #include "backtrace.h"
+#include "get_config.h"
 
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -34,6 +35,7 @@
                   << __LINE__ << "]: " << msg << std::endl;             \
     } while (0)
 
+#ifdef HAVE_BACKTRACE
 #define EXCEPTION_TYPE(type, msg)                       \
     do {                                                \
         std::stringstream ss;                           \
@@ -43,6 +45,15 @@
             BackTrace().print_bt();                     \
         throw std::type(ss.str());                      \
     } while (0)
+#else
+#define EXCEPTION_TYPE(type, msg)                       \
+    do {                                                \
+        std::stringstream ss;                           \
+        ss << msg;                                      \
+        log_err(ss.str());                              \
+        throw std::type(ss.str());                      \
+    } while (0)
+#endif
 
 #define EXCEPTION(msg)                          \
     EXCEPTION_TYPE(logic_error, msg)

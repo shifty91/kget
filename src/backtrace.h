@@ -20,6 +20,10 @@
 #ifndef _BACKTRACE_H_
 #define _BACKTRACE_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_BACKTRACE
+
 #include <iostream>
 #include <cstddef>
 #include <execinfo.h>
@@ -64,5 +68,7 @@ public:
             std::cout << "  " << m_strings[i] << std::endl;
     }
 };
+
+#endif
 
 #endif /* _BACKTRACE_H_ */
