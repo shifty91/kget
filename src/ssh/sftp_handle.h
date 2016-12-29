@@ -20,6 +20,10 @@
 #ifndef _SFTP_HANDLE_H_
 #define _SFTP_HANDLE_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <string>
 
 #include <libssh2.h>
@@ -69,5 +73,7 @@ public:
         return libssh2_sftp_write(m_handle, buffer, len);
     }
 };
+
+#endif
 
 #endif /* _SFTP_HANDLE_H_ */

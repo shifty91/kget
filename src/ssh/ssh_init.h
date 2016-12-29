@@ -20,6 +20,10 @@
 #ifndef _SSH_INIT_H_
 #define _SSH_INIT_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <libssh2.h>
 
 #include "logger.h"
@@ -42,5 +46,7 @@ public:
         libssh2_exit();
     }
 };
+
+#endif
 
 #endif /* _SSH_INIT_H_ */

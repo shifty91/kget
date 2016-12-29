@@ -20,6 +20,10 @@
 #ifndef _SFTP_H_
 #define _SFTP_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <string>
 #include <vector>
 #include <utility>
@@ -47,5 +51,7 @@ public:
     virtual void get(const std::string& fileToSave, const std::string& user = "",
                      const std::string& pw = "") const override;
 };
+
+#endif
 
 #endif /* _SFTP_H_ */

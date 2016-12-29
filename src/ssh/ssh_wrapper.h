@@ -20,10 +20,16 @@
 #ifndef _SSH_WRAPPER_H_
 #define _SSH_WRAPPER_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include "ssh/ssh_init.h"
 #include "ssh/ssh_session.h"
 #include "ssh/sftp_session.h"
 #include "ssh/sftp_handle.h"
 #include "ssh/ssh_utilities.h"
+
+#endif
 
 #endif /* _SSH_WRAPPER_H_ */

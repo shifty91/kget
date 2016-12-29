@@ -19,6 +19,7 @@
 
 #include <libgen.h>
 
+#include "get_config.h"
 #include "tcp_connection.h"
 #include "tcp_ssl_connection.h"
 #include "url_parser.h"
@@ -65,9 +66,11 @@ void ProtocolDispatcher::dispatch()
             } else if (parser.method() == "ftp") {
                 FTPMethod ftp(parser.host(), parser.object());
                 ftp.get(name, m_user, m_pw);
+#ifdef HAVE_LIBSSH
             } else if (parser.method() == "sftp") {
                 SFTPMethod sftp(parser.host(), parser.object());
                 sftp.get(name, m_user, m_pw);
+#endif
             } else {
                 EXCEPTION("The method " << parser.method() <<
                           " is not supported right now.");

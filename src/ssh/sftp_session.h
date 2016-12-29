@@ -20,6 +20,10 @@
 #ifndef _SFTP_SESSION_H_
 #define _SFTP_SESSION_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <libssh2.h>
 #include <libssh2_sftp.h>
 
@@ -82,5 +86,7 @@ public:
         return SFTPHandle(m_session, object, flags, mode);
     }
 };
+
+#endif
 
 #endif /* _SFTP_SESSION_H_ */

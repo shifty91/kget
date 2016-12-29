@@ -17,6 +17,10 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <iomanip>
 #include <array>
 #include <iostream>
@@ -166,3 +170,5 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
         pg.update(read);
     }
 }
+
+#endif

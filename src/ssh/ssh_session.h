@@ -20,6 +20,10 @@
 #ifndef _SSH_SESSION_H_
 #define _SSH_SESSION_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <string>
 #include <libssh2.h>
 
@@ -105,5 +109,7 @@ public:
             m_session, user.c_str(), publickey.c_str(), privatekey.c_str(), passphrase.c_str());
     }
 };
+
+#endif
 
 #endif /* _SSH_SESSION_H_ */

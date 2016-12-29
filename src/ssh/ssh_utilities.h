@@ -20,6 +20,10 @@
 #ifndef _SSH_UTILITIES_H_
 #define _SSH_UTILITIES_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_LIBSSH
+
 #include <string>
 
 #include <libssh2.h>
@@ -84,5 +88,7 @@
         }                                                   \
         EXCEPTION(msg << ": " << reason);                   \
     } while (0)
+
+#endif
 
 #endif /* _SSH_UTILITIES_H_ */
