@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "get_config.h"
 #include "config.h"
 #include "protocol_dispatcher.h"
 #include "logger.h"
@@ -58,7 +59,8 @@ void print_usage_and_die(int die)
     std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
     std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
     std::cerr << "    --debug, -d      : enable debug output" << std::endl;
-    std::cerr << "get version 1.4 (C) Kurt Kanzenbach <kurt@kmk-computers.de>" << std::endl;
+    std::cerr << "get version " << VERSION << " (C) Kurt Kanzenbach <kurt@kmk-computers.de>"
+              << std::endl;
     std::exit(die ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
