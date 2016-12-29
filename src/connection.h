@@ -37,7 +37,7 @@ class Connection
 {
 protected:
      // Buffer size for read(2) used in TCP connections
-    static const int BUFFER_SIZE = 4096;
+    static const std::size_t BUFFER_SIZE = 4096;
     int m_sock;
     bool m_connected;
 
