@@ -38,8 +38,8 @@ Example:
 
 ## Dependencies ##
 
-- OpenSSL
-- LibSSH2
+- OpenSSL (optional, used for HTTPS)
+- LibSSH2 (optional, used for SFTP)
 - termios
 
 ## Author ##
