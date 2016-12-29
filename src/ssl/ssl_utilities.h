@@ -20,6 +20,10 @@
 #ifndef _SSL_UTILITIES_H_
 #define _SSL_UTILITIES_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <openssl/err.h>
 
 #include "logger.h"
@@ -29,5 +33,7 @@
         ERR_print_errors_fp(stderr);              \
         EXCEPTION(msg);                           \
     } while (0)
+
+#endif
 
 #endif /* _SSL_UTILITIES_H_ */

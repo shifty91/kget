@@ -20,6 +20,10 @@
 #ifndef _SSL_CONTEXT_H_
 #define _SSL_CONTEXT_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <openssl/ssl.h>
 
 #include "ssl/ssl_utilities.h"
@@ -83,5 +87,7 @@ public:
         SSL_CTX_set_default_verify_paths(m_ssl_context);
     }
 };
+
+#endif
 
 #endif /* _SSL_CONTEXT_H_ */

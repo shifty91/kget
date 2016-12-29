@@ -20,6 +20,10 @@
 #ifndef _SSL_INIT_H_
 #define _SSL_INIT_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <openssl/ssl.h>
 
 /**
@@ -35,5 +39,7 @@ public:
         SSL_library_init();
     }
 };
+
+#endif
 
 #endif /* _SSL_INIT_H_ */

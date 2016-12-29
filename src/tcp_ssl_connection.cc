@@ -17,6 +17,10 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include "tcp_ssl_connection.h"
 
 #include "logger.h"
@@ -225,3 +229,5 @@ std::string TCPSSLConnection::read_ln() const
 
     return result;
 }
+
+#endif

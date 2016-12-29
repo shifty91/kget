@@ -20,6 +20,10 @@
 #ifndef _TCP_SSL_CONNECTION_H_
 #define _TCP_SSL_CONNECTION_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <string>
 #include <sstream>
 
@@ -84,5 +88,7 @@ public:
 
     virtual std::string read_ln() const override;
 };
+
+#endif
 
 #endif /* _TCP_SSL_CONNECTION_H_ */

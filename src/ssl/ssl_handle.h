@@ -20,6 +20,10 @@
 #ifndef _SSL_HANDLE_H_
 #define _SSL_HANDLE_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <openssl/ssl.h>
 
 #include "ssl/ssl_context.h"
@@ -128,5 +132,7 @@ public:
         return "Unknown SSL error ocurred";
     }
 };
+
+#endif
 
 #endif /* _SSL_HANDLE_H_ */

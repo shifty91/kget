@@ -20,6 +20,10 @@
 #ifndef _BIO_HANDLE_H_
 #define _BIO_HANDLE_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <openssl/bio.h>
 
 #include "logger.h"
@@ -89,5 +93,7 @@ public:
         return p;
     }
 };
+
+#endif
 
 #endif /* _BIO_HANDLE_H_ */

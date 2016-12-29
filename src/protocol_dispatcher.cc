@@ -60,9 +60,11 @@ void ProtocolDispatcher::dispatch()
             if (parser.method() == "http") {
                 HTTPMethod<> http(parser.host(), parser.object());
                 http.get(name, m_user, m_pw);
+#ifdef HAVE_OPENSSL
             } else if (parser.method() == "https") {
                 HTTPMethod<TCPSSLConnection> https(parser.host(), parser.object());
                 https.get(name, m_user, m_pw);
+#endif
             } else if (parser.method() == "ftp") {
                 FTPMethod ftp(parser.host(), parser.object());
                 ftp.get(name, m_user, m_pw);
