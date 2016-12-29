@@ -20,6 +20,10 @@
 #ifndef _BASE64_H_
 #define _BASE64_H_
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include <string>
 
 #include "logger.h"
@@ -41,5 +45,7 @@ public:
         EXCEPTION("Base64::decode is not implemented!");
     }
 };
+
+#endif
 
 #endif /* _BASE64_H_ */

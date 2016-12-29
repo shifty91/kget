@@ -17,6 +17,10 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "get_config.h"
+
+#ifdef HAVE_OPENSSL
+
 #include "base64.h"
 #include "logger.h"
 #include "ssl/ssl_wrapper.h"
@@ -39,3 +43,5 @@ std::string Base64::encode() const
 
     return result;
 }
+
+#endif

@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+#include "get_config.h"
 #include "logger.h"
 #include "method.h"
 #include "tcp_connection.h"
@@ -78,11 +79,15 @@ private:
                 << "User-Agent: Kurts Get Program\r\n"
                 << "Connection: Close\r\n";
         if (user != "") {
+#ifdef HAVE_OPENSSL
             std::stringstream auth;
             auth << user << ":" << pw;
             Base64 base64(auth.str());
             request << "Authorization: Basic "
                     << base64.encode() << "\r\n";
+#else
+            EXCEPTION("OpenSSL is needed for HTTP Basic Auth.");
+#endif
         }
         request << "\r\n";
 
