@@ -32,6 +32,7 @@
 #include "logger.h"
 #include "method.h"
 #include "tcp_connection.h"
+#include "tcp_ssl_connection.h"
 #include "redirect_exception.h"
 #include "auth_exception.h"
 #include "base64.h"
@@ -50,13 +51,14 @@ namespace HTTPHelpers {
         static const int PORT = 80;
     };
 
+#ifdef HAVE_OPENSSL
     template<>
     class Service<TCPSSLConnection>
     {
     public:
         static const int PORT = 443;
     };
-
+#endif
 }
 
 template<typename CONNECTION = TCPConnection>
