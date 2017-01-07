@@ -35,7 +35,7 @@
 
 SSHInit SFTPMethod::m_ssh_init;
 
-KeyPairVector SFTPMethod::find_user_keys() const
+SFTPMethod::KeyPairVector SFTPMethod::find_user_keys() const
 {
     KeyPairVector keys;
     keys.reserve(2);
