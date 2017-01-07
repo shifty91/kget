@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Kurt Kanzenbach <kurt@kmk-computers.de>
+ * Copyright (C) 2015-2017 Kurt Kanzenbach <kurt@kmk-computers.de>
  *
  * This file is part of Get.
  *
