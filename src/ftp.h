@@ -23,7 +23,7 @@
 #include "method.h"
 #include "tcp_connection.h"
 
-class FTPMethod : Method
+class FTPMethod : public Method
 {
 public:
     FTPMethod() :

@@ -32,7 +32,7 @@
 #include "tcp_connection.h"
 #include "ssh/ssh_wrapper.h"
 
-class SFTPMethod : Method
+class SFTPMethod : public Method
 {
 public:
     using KeyPairVector = std::vector<std::pair<std::string, std::string> >;
