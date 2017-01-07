@@ -20,25 +20,25 @@
 #ifndef _AUTH_EXCEPTION_H_
 #define _AUTH_EXCEPTION_H_
 
-#include <stdexcept>
+#include <exception>
 #include <string>
 #include <sstream>
 
-class AuthException : public std::runtime_error
+class AuthException : public std::exception
 {
 private:
     std::string m_additionalInfo;
 
 public:
     AuthException(const std::string& additionalInfo = "") :
-        std::runtime_error("HTTP Authorization required"),
+        std::exception(),
         m_additionalInfo{additionalInfo}
     {}
 
-    virtual const char* what() const throw()
+    virtual const char *what() const noexcept
     {
         std::stringstream ss;
-        ss << std::runtime_error::what();
+        ss << "HTTP Authorization required";
         if (m_additionalInfo != "")
             ss << ": " << m_additionalInfo;
         return ss.str().c_str();
