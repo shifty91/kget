@@ -17,7 +17,7 @@ set(SRCS
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pedantic -Wall -march=native")
 set(CMAKE_BUILD_TYPE "Release")
-set(VERSION "1.5")
+set(VERSION "1.6")
 
 # check for C++14
 include(CheckCXXCompilerFlag)
