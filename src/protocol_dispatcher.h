@@ -21,12 +21,17 @@
 #define _PROTOCOL_DISPATCHER_H_
 
 #include <string>
+#include <memory>
+#include <unordered_map>
 
 #include "request.h"
+#include "method.h"
 
 class ProtocolDispatcher
 {
 public:
+    using ProtoMap = std::unordered_map<std::string, std::unique_ptr<Method> >;
+
     ProtocolDispatcher(const std::string& url, const std::string& user = "",
                        const std::string& pw = "", const std::string& output = "") :
         m_url{url}, m_user{user}, m_pw{pw}, m_output{output}
@@ -35,6 +40,14 @@ public:
     void dispatch();
 
 private:
+    static ProtoMap protoMap;
+    /**
+     * We need to explicitly protoMap, b/o initializer lists make copies of
+     * std::unique_ptrs which doesn't work :(.
+     */
+    static bool initialized;
+    static void init();
+
     std::string m_url;
     std::string m_user;
     std::string m_pw;

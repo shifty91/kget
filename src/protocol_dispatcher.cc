@@ -34,6 +34,22 @@
 
 #include "protocol_dispatcher.h"
 
+ProtocolDispatcher::ProtoMap ProtocolDispatcher::protoMap;
+bool ProtocolDispatcher::initialized = false;
+
+void ProtocolDispatcher::init()
+{
+    protoMap.emplace("http",  std::make_unique<HTTPMethod<> >());
+#ifdef HAVE_OPENSSL
+    protoMap.emplace("https", std::make_unique<HTTPMethod<TCPSSLConnection> >());
+#endif
+    protoMap.emplace("ftp",   std::make_unique<FTPMethod>());
+#ifdef HAVE_LIBSSH
+    protoMap.emplace("sftp",  std::make_unique<SFTPMethod>());
+#endif
+    initialized = true;
+}
+
 Request ProtocolDispatcher::build_request() const
 {
     URLParser parser(m_url);
@@ -59,27 +75,19 @@ void ProtocolDispatcher::dispatch()
 {
     Config *config = Config::instance();
 
+    if (!initialized)
+        init();
+
     while (42) {
         auto req = build_request();
 
         // here: catch only redirect|auth exceptions, everything else is just forwarded
         try {
-            if (req.method() == "http") {
-                HTTPMethod<>().get(req);
-#ifdef HAVE_OPENSSL
-            } else if (req.method() == "https") {
-                HTTPMethod<TCPSSLConnection>().get(req);
-#endif
-            } else if (req.method() == "ftp") {
-                FTPMethod().get(req);
-#ifdef HAVE_LIBSSH
-            } else if (req.method() == "sftp") {
-                SFTPMethod().get(req);
-#endif
-            } else {
-                EXCEPTION("The method " << req.method() <<
-                          " is not supported right now.");
-            }
+            auto it = protoMap.find(req.method());
+            if (it == protoMap.end())
+                EXCEPTION("The method " << req.method() << " is not supported right now.");
+
+            it->second->get(req);
         } catch (const RedirectException& ex) {
             if (config->follow_redirects()) {
                 const auto& url = ex.url();
