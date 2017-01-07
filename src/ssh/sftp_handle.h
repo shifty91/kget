@@ -35,9 +35,6 @@
 
 class SFTPHandle
 {
-private:
-    LIBSSH2_SFTP_HANDLE *m_handle;
-
 public:
     inline SFTPHandle() :
         m_handle{nullptr}
@@ -58,20 +55,23 @@ public:
             libssh2_sftp_close(m_handle);
     }
 
-    inline LIBSSH2_SFTP_HANDLE *handle()
+    inline LIBSSH2_SFTP_HANDLE *handle() noexcept
     {
         return m_handle;
     }
 
-    inline auto read(char *buffer, std::size_t len)
+    inline auto read(char *buffer, std::size_t len) noexcept
     {
         return libssh2_sftp_read(m_handle, buffer, len);
     }
 
-    inline auto write(const char *buffer, std::size_t len)
+    inline auto write(const char *buffer, std::size_t len) noexcept
     {
         return libssh2_sftp_write(m_handle, buffer, len);
     }
+
+private:
+    LIBSSH2_SFTP_HANDLE *m_handle;
 };
 
 #endif

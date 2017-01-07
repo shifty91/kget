@@ -35,9 +35,6 @@
 
 class SFTPSession
 {
-private:
-    LIBSSH2_SFTP *m_session;
-
 public:
     inline SFTPSession() :
         m_session{nullptr}
@@ -59,7 +56,7 @@ public:
     SFTPSession& operator=(const SFTPSession& other) = delete;
     SFTPSession& operator=(const SFTPSession&& other) = delete;
 
-    inline LIBSSH2_SFTP *session()
+    inline LIBSSH2_SFTP *session() noexcept
     {
         return m_session;
     }
@@ -81,10 +78,13 @@ public:
 
     inline SFTPHandle open(const std::string& object,
                            unsigned long flags = LIBSSH2_FXF_READ,
-                           long mode = 0)
+                           long mode = 0) noexcept
     {
         return SFTPHandle(m_session, object, flags, mode);
     }
+
+private:
+    LIBSSH2_SFTP *m_session;
 };
 
 #endif

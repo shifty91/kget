@@ -24,12 +24,6 @@
 
 class URLParser
 {
-private:
-    const std::string& m_url;
-    std::string m_method;
-    std::string m_host;
-    std::string m_object;
-
 public:
     explicit URLParser(const std::string& url) :
         m_url{url}
@@ -37,23 +31,26 @@ public:
 
     void parse();
 
-    inline
-    const std::string& method() const
+    inline const std::string& method() const noexcept
     {
         return m_method;
     }
 
-    inline
-    const std::string& host() const
+    inline const std::string& host() const noexcept
     {
         return m_host;
     }
 
-    inline
-    const std::string& object() const
+    inline const std::string& object() const noexcept
     {
         return m_object;
     }
+
+private:
+    const std::string& m_url;
+    std::string m_method;
+    std::string m_host;
+    std::string m_object;
 };
 
 #endif /* _URL_PARSER_H_ */

@@ -64,6 +64,39 @@ namespace HTTPHelpers {
 template<typename CONNECTION = TCPConnection>
 class HTTPMethod : public Method
 {
+public:
+    HTTPMethod(const std::string& host, const std::string& object) :
+        Method(host, object)
+    {}
+
+    virtual void get(const std::string& fileToSave, const std::string& user = "",
+                     const std::string& pw = "") const override
+    {
+        CONNECTION tcp;
+        std::string request;
+        std::vector<std::string> header;
+        Config *config = Config::instance();
+
+        tcp.connect(m_host, HTTPHelpers::Service<CONNECTION>::PORT);
+        request = build_http_request(user, pw);
+
+        tcp.write(request);
+
+        header = read_http_header(tcp);
+        check_response_code(header);
+
+        auto length = get_content_length(header);
+
+        // save
+        std::ofstream ofs(fileToSave);
+        if (ofs.fail())
+            EXCEPTION("Failed to open file: " << fileToSave);
+        if (length > 0 && config->show_pg())
+            tcp.read_until_eof_with_pg_to_fstream(ofs, length);
+        else
+            tcp.read_until_eof_to_fstream(ofs);
+    }
+
 private:
     std::string build_http_request(const std::string& user, const std::string& pw) const
     {
@@ -201,39 +234,6 @@ private:
             EXCEPTION("Unsupported HTTP auth: " << auth);
 
         log_info("HTTP Basic Authentication: " << realm);
-    }
-
-public:
-    HTTPMethod(const std::string& host, const std::string& object) :
-        Method(host, object)
-    {}
-
-    virtual void get(const std::string& fileToSave, const std::string& user = "",
-                     const std::string& pw = "") const override
-    {
-        CONNECTION tcp;
-        std::string request;
-        std::vector<std::string> header;
-        Config *config = Config::instance();
-
-        tcp.connect(m_host, HTTPHelpers::Service<CONNECTION>::PORT);
-        request = build_http_request(user, pw);
-
-        tcp.write(request);
-
-        header = read_http_header(tcp);
-        check_response_code(header);
-
-        auto length = get_content_length(header);
-
-        // save
-        std::ofstream ofs(fileToSave);
-        if (ofs.fail())
-            EXCEPTION("Failed to open file: " << fileToSave);
-        if (length > 0 && config->show_pg())
-            tcp.read_until_eof_with_pg_to_fstream(ofs, length);
-        else
-            tcp.read_until_eof_to_fstream(ofs);
     }
 };
 

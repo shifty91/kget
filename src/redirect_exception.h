@@ -26,9 +26,6 @@
 
 class RedirectException : public std::exception
 {
-private:
-    const std::string m_url;
-
 public:
     RedirectException(const std::string& url) :
         std::exception(),
@@ -46,6 +43,9 @@ public:
     {
         return m_url;
     }
+
+private:
+    const std::string m_url;
 };
 
 #endif /* _REDIRECT_EXCEPTION_H_ */

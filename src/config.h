@@ -20,23 +20,9 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-class Config
+class Config final
 {
-private:
-    static Config *m_instance;
-    bool m_show_pg;
-    bool m_follow_redirects;
-    bool m_verify_peer;
-    bool m_use_sslv2;
-    bool m_use_sslv3;
-    bool m_debug;
-
 public:
-    Config() :
-        m_show_pg{false}, m_follow_redirects{true}, m_verify_peer{false},
-        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}
-    {}
-
     ~Config()
     {
         delete m_instance;
@@ -44,70 +30,85 @@ public:
 
     static Config *instance()
     {
-        if (m_instance == nullptr)
+        if (!m_instance)
             m_instance = new Config();
         return m_instance;
     }
 
-    inline const bool& show_pg() const
+    inline const bool& show_pg() const noexcept
     {
         return m_show_pg;
     }
 
-    inline bool& show_pg()
+    inline bool& show_pg() noexcept
     {
         return m_show_pg;
     }
 
-    inline const bool& follow_redirects() const
+    inline const bool& follow_redirects() const noexcept
     {
         return m_follow_redirects;
     }
 
-    inline bool& follow_redirects()
+    inline bool& follow_redirects() noexcept
     {
         return m_follow_redirects;
     }
 
-    inline const bool& verify_peer() const
+    inline const bool& verify_peer() const noexcept
     {
         return m_verify_peer;
     }
 
-    inline bool& verify_peer()
+    inline bool& verify_peer() noexcept
     {
         return m_verify_peer;
     }
 
-    inline const bool& use_sslv2() const
+    inline const bool& use_sslv2() const noexcept
     {
         return m_use_sslv2;
     }
 
-    inline bool& use_sslv2()
+    inline bool& use_sslv2() noexcept
     {
         return m_use_sslv2;
     }
 
-    inline const bool& use_sslv3() const
+    inline const bool& use_sslv3() const noexcept
     {
         return m_use_sslv3;
     }
 
-    inline bool& use_sslv3()
+    inline bool& use_sslv3() noexcept
     {
         return m_use_sslv3;
     }
 
-    inline const bool& debug() const
+    inline const bool& debug() const noexcept
     {
         return m_debug;
     }
 
-    inline bool& debug()
+    inline bool& debug() noexcept
     {
         return m_debug;
     }
+
+private:
+    static Config *m_instance;
+
+    Config() :
+        m_show_pg{false}, m_follow_redirects{true}, m_verify_peer{false},
+        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}
+    {}
+
+    bool m_show_pg;
+    bool m_follow_redirects;
+    bool m_verify_peer;
+    bool m_use_sslv2;
+    bool m_use_sslv3;
+    bool m_debug;
 };
 
 #endif /* _CONFIG_H_ */

@@ -24,12 +24,6 @@
 
 class ProtocolDispatcher
 {
-private:
-    std::string m_url;
-    std::string m_user;
-    std::string m_pw;
-    std::string m_output;
-
 public:
     ProtocolDispatcher(const std::string& url, const std::string& user = "",
                        const std::string& pw = "", const std::string& output = "") :
@@ -37,6 +31,12 @@ public:
     {}
 
     void dispatch();
+
+private:
+    std::string m_url;
+    std::string m_user;
+    std::string m_pw;
+    std::string m_output;
 };
 
 #endif /* _PROTOCOL_DISPATCHER_H_ */

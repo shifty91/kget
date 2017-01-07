@@ -35,12 +35,6 @@
 
 class Connection
 {
-protected:
-     // Buffer size for read(2) used in TCP connections
-    static const std::size_t BUFFER_SIZE = 4096;
-    int m_sock;
-    bool m_connected;
-
 public:
     Connection() :
         m_sock{-1}, m_connected{false}
@@ -81,6 +75,13 @@ public:
     virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t fileSize) const = 0;
 
     virtual std::string read_ln() const = 0;
+
+protected:
+    // Buffer size for read(2) used in TCP connections
+    static const std::size_t BUFFER_SIZE = 4096;
+
+    int m_sock;
+    bool m_connected;
 };
 
 #endif /* _CONNECTION_H_ */

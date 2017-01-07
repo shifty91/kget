@@ -30,10 +30,11 @@
  */
 class NetUtils
 {
-private:
-    static void print_ip(const struct addrinfo *sa);
 public:
     static int tcp_connect(const std::string& host, const std::string& service);
+
+private:
+    static void print_ip(const struct addrinfo *sa);
 };
 
 #endif /* _NET_UTILS_H_ */

@@ -34,10 +34,6 @@
  */
 class SSLHandle
 {
-private:
-    SSL *m_ssl_handle;
-    bool m_connected;
-
 public:
     inline SSLHandle() :
         m_ssl_handle{nullptr}, m_connected{false}
@@ -83,32 +79,32 @@ public:
     }
 
     inline void
-    set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *)) const
+    set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *)) const noexcept
     {
         SSL_set_verify(m_ssl_handle, mode, verify_callback);
     }
 
-    inline long get_verify_result() const
+    inline long get_verify_result() const noexcept
     {
         return SSL_get_verify_result(m_ssl_handle);
     }
 
-    inline SSL *handle() const
+    inline SSL *handle() const noexcept
     {
         return m_ssl_handle;
     }
 
-    inline int read(void *buffer, int size) const
+    inline int read(void *buffer, int size) const noexcept
     {
         return SSL_read(m_ssl_handle, buffer, size);
     }
 
-    inline int write(const void *buffer, int size) const
+    inline int write(const void *buffer, int size) const noexcept
     {
         return SSL_write(m_ssl_handle, buffer, size);
     }
 
-    inline auto get_error(int ret) const
+    inline auto get_error(int ret) const noexcept
     {
         return SSL_get_error(m_ssl_handle, ret);
     }
@@ -131,6 +127,10 @@ public:
 #undef _
         return "Unknown SSL error ocurred";
     }
+
+private:
+    SSL *m_ssl_handle;
+    bool m_connected;
 };
 
 #endif

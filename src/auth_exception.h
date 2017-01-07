@@ -26,9 +26,6 @@
 
 class AuthException : public std::exception
 {
-private:
-    std::string m_additionalInfo;
-
 public:
     AuthException(const std::string& additionalInfo = "") :
         std::exception(),
@@ -43,6 +40,9 @@ public:
             ss << ": " << m_additionalInfo;
         return ss.str().c_str();
     }
+
+private:
+    std::string m_additionalInfo;
 };
 
 #endif /* _AUTH_EXCEPTION_H_ */

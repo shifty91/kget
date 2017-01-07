@@ -33,9 +33,6 @@
  */
 class SSLContext
 {
-private:
-    SSL_CTX *m_ssl_context;
-
 public:
     inline SSLContext() :
         m_ssl_context{nullptr}
@@ -54,7 +51,7 @@ public:
             GET_SSL_EXCEPTION("SSL_CTX_new() failed.");
     }
 
-    inline ~SSLContext()
+    inline ~SSLContext() noexcept
     {
         if (m_ssl_context != nullptr)
             SSL_CTX_free(m_ssl_context);
@@ -66,12 +63,12 @@ public:
     SSLContext& operator=(const SSLContext& other) = delete;
     SSLContext& operator=(const SSLContext&& other) = delete;
 
-    inline SSL_CTX *context() const
+    inline SSL_CTX *context() const noexcept
     {
         return m_ssl_context;
     }
 
-    inline void set_options(long options)
+    inline void set_options(long options) noexcept
     {
         (void)SSL_CTX_set_options(m_ssl_context, options);
     }
@@ -82,10 +79,13 @@ public:
             EXCEPTION("SSL_CTX_set_cipher_list() failed.");
     }
 
-    inline void set_default_verify_paths()
+    inline void set_default_verify_paths() noexcept
     {
         SSL_CTX_set_default_verify_paths(m_ssl_context);
     }
+
+private:
+    SSL_CTX *m_ssl_context;
 };
 
 #endif

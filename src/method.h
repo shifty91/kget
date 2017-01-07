@@ -29,10 +29,6 @@
  */
 class Method
 {
-protected:
-    std::string m_host;
-    std::string m_object;
-
 public:
     Method(const std::string& host, const std::string& object) :
         m_host{host}, m_object{object}
@@ -43,6 +39,10 @@ public:
 
     virtual void get(const std::string& fileToSave, const std::string& user = "",
                      const std::string& pw = "") const = 0;
+
+protected:
+    std::string m_host;
+    std::string m_object;
 };
 
 #endif /* _METHOD_H_ */

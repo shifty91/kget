@@ -27,38 +27,34 @@
  */
 class Request
 {
-private:
-    std::string m_host;
-    std::string m_object;
-
 public:
     Request(const std::string& host, const std::string& object) :
         m_host{host}, m_object{object}
     {}
 
-    inline
-    const std::string& host() const
+    inline const std::string& host() const noexcept
     {
         return m_host;
     }
 
-    inline
-    std::string& host()
+    inline std::string& host() noexcept
     {
         return m_host;
     }
 
-    inline
-    const std::string& object() const
+    inline const std::string& object() const noexcept
     {
         return m_object;
     }
 
-    inline
-    std::string& object()
+    inline std::string& object() noexcept
     {
         return m_object;
     }
+
+private:
+    std::string m_host;
+    std::string m_object;
 };
 
 #endif /* _REQUEST_H_ */

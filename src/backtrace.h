@@ -29,17 +29,10 @@
 #include <execinfo.h>
 
 /**
- * This class can be used to determine the stacktrace of the
- * current execution.
+ * This class can be used to determine the stacktrace of the current execution.
  */
 class BackTrace
 {
-private:
-    static const std::size_t MAX_STACK_SIZE = 10;
-    std::size_t m_size;
-    void *m_array[MAX_STACK_SIZE];
-    char **m_strings;
-
 public:
     inline BackTrace()
     {
@@ -67,6 +60,13 @@ public:
         for (std::size_t i = 0; i < m_size; ++i)
             std::cout << "  " << m_strings[i] << std::endl;
     }
+
+private:
+    static const std::size_t MAX_STACK_SIZE = 10;
+
+    std::size_t m_size;
+    void *m_array[MAX_STACK_SIZE];
+    char **m_strings;
 };
 
 #endif

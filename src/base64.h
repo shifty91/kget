@@ -30,9 +30,6 @@
 
 class Base64
 {
-private:
-    std::string m_content;
-
 public:
     explicit Base64(const std::string& content) :
         m_content{content}
@@ -44,6 +41,9 @@ public:
     {
         EXCEPTION("Base64::decode is not implemented!");
     }
+
+private:
+    std::string m_content;
 };
 
 #endif

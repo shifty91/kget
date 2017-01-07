@@ -32,10 +32,6 @@
 
 class SSHSession
 {
-private:
-    LIBSSH2_SESSION *m_session;
-    bool m_connected;
-
 public:
     inline SSHSession() :
         m_connected{false}
@@ -58,12 +54,12 @@ public:
     SSHSession& operator=(const SSHSession& other) = delete;
     SSHSession& operator=(const SSHSession&& other) = delete;
 
-    inline LIBSSH2_SESSION *session()
+    inline LIBSSH2_SESSION *session() noexcept
     {
         return m_session;
     }
 
-    inline void set_blocking(bool value)
+    inline void set_blocking(bool value) noexcept
     {
         libssh2_session_set_blocking(m_session, value);
     }
@@ -75,17 +71,17 @@ public:
         m_connected = true;
     }
 
-    inline std::string hostkey(int hash_type)
+    inline std::string hostkey(int hash_type) noexcept
     {
         return libssh2_hostkey_hash(m_session, hash_type);
     }
 
-    inline std::string auth_list(const std::string& user)
+    inline std::string auth_list(const std::string& user) noexcept
     {
         return libssh2_userauth_list(m_session, user.c_str(), user.size());
     }
 
-    inline bool auth_pw(const std::string& user, const std::string& pw)
+    inline bool auth_pw(const std::string& user, const std::string& pw) noexcept
     {
         auto rc = libssh2_userauth_password(m_session, user.c_str(), pw.c_str());
 
@@ -103,11 +99,15 @@ public:
     }
 
     inline auto auth_key(const std::string& user, const std::string& publickey,
-                         const std::string& privatekey, const std::string& passphrase)
+                         const std::string& privatekey, const std::string& passphrase) noexcept
     {
         return libssh2_userauth_publickey_fromfile(
             m_session, user.c_str(), publickey.c_str(), privatekey.c_str(), passphrase.c_str());
     }
+
+private:
+    LIBSSH2_SESSION *m_session;
+    bool m_connected;
 };
 
 #endif

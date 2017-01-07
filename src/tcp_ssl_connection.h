@@ -40,13 +40,6 @@
  */
 class TCPSSLConnection : public Connection
 {
-private:
-    static SSLInit m_ssl_init;
-    SSLHandle m_ssl;
-    SSLContext m_ssl_ctx;
-
-    void init_ssl(const std::string& host);
-
 public:
     TCPSSLConnection() :
         Connection()
@@ -87,6 +80,13 @@ public:
     virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t fileSize) const override;
 
     virtual std::string read_ln() const override;
+
+private:
+    static SSLInit m_ssl_init;
+    SSLHandle m_ssl;
+    SSLContext m_ssl_ctx;
+
+    void init_ssl(const std::string& host);
 };
 
 #endif
