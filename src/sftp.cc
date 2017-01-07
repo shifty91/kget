@@ -100,18 +100,17 @@ void SFTPMethod::publickey_auth(SSHSession& session, const std::string& user) co
         EXCEPTION("Publickey authentication failed.");
 }
 
-void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
-                     const std::string& pw) const
+void SFTPMethod::get(const Request& req) const
 {
     TCPConnection tcp;
     SSHSession session;
     SFTPSession sftp_session;
     std::string fingerprint;
     std::string userauthlist;
-    std::string object(m_object);
+    std::string slashed_object(req.object());
     int sock;
 
-    tcp.connect(m_host, "ssh");
+    tcp.connect(req.host(), "ssh");
     sock = tcp.socket();
 
     session.set_blocking(true);
@@ -120,44 +119,44 @@ void SFTPMethod::get(const std::string& fileToSave, const std::string& user,
     fingerprint = session.hostkey(LIBSSH2_HOSTKEY_HASH_SHA1);
     print_fingerprint(fingerprint);
 
-    userauthlist = session.auth_list(user);
+    userauthlist = session.auth_list(req.user());
 
     // password authentication
-    if (pw != "") {
+    if (req.pw() != "") {
         std::size_t found = userauthlist.find("password");
         if (found == std::string::npos)
             EXCEPTION("Username and password specified, but password authenticate is not supported.");
-        if (!session.auth_pw(user, pw))
+        if (!session.auth_pw(req.user(), req.pw()))
             EXCEPTION("Authentication failed!");
     } else { // public key
         auto found = userauthlist.find("publickey");
         if (found == std::string::npos)
             EXCEPTION("Publickey authentication is not supported.");
-        publickey_auth(session, user);
+        publickey_auth(session, req.user());
     }
 
     // start sftp
     sftp_session.new_session(session);
 
-    if (m_object[0] != '/') {
+    if (req.object()[0] != '/') {
         std::stringstream ss;
-        ss << "/" << m_object;
-        object = ss.str();
+        ss << "/" << req.object();
+        slashed_object = ss.str();
     }
 
     // stat file
-    auto file_attr = sftp_session.stat(object);
+    auto file_attr = sftp_session.stat(slashed_object);
     auto len = file_attr.filesize;
 
     // open file
-    auto sftp_handle = sftp_session.open(object, LIBSSH2_FXF_READ, 0);
+    auto sftp_handle = sftp_session.open(slashed_object, LIBSSH2_FXF_READ, 0);
 
     // get and save file
     ProgressBar pg(len);
     std::ofstream ofs;
-    ofs.open(fileToSave);
+    ofs.open(req.out_file_name());
     if (ofs.fail())
-        EXCEPTION("Failed to open file " << fileToSave);
+        EXCEPTION("Failed to open file " << req.out_file_name());
 
     while (42) {
         char buffer[4096];

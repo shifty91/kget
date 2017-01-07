@@ -65,20 +65,19 @@ template<typename CONNECTION = TCPConnection>
 class HTTPMethod : public Method
 {
 public:
-    HTTPMethod(const std::string& host, const std::string& object) :
-        Method(host, object)
+    HTTPMethod() :
+        Method()
     {}
 
-    virtual void get(const std::string& fileToSave, const std::string& user = "",
-                     const std::string& pw = "") const override
+    virtual void get(const Request& req) const override
     {
         CONNECTION tcp;
         std::string request;
         std::vector<std::string> header;
         Config *config = Config::instance();
 
-        tcp.connect(m_host, HTTPHelpers::Service<CONNECTION>::PORT);
-        request = build_http_request(user, pw);
+        tcp.connect(req.host(), HTTPHelpers::Service<CONNECTION>::PORT);
+        request = build_http_request(req);
 
         tcp.write(request);
 
@@ -88,9 +87,9 @@ public:
         auto length = get_content_length(header);
 
         // save
-        std::ofstream ofs(fileToSave);
+        std::ofstream ofs(req.out_file_name());
         if (ofs.fail())
-            EXCEPTION("Failed to open file: " << fileToSave);
+            EXCEPTION("Failed to open file: " << req.out_file_name());
         if (length > 0 && config->show_pg())
             tcp.read_until_eof_with_pg_to_fstream(ofs, length);
         else
@@ -98,25 +97,25 @@ public:
     }
 
 private:
-    std::string build_http_request(const std::string& user, const std::string& pw) const
+    std::string build_http_request(const Request& req) const
     {
         std::stringstream request;
-        std::string object{m_object};
+        std::string slashed_object{req.object()};
 
-        if (m_object[0] != '/') {
+        if (req.object()[0] != '/') {
             std::stringstream ss;
-            ss << "/" << m_object;
-            object = ss.str();
+            ss << "/" << req.object();
+            slashed_object = ss.str();
         }
 
-        request << "GET "   << object << " HTTP/1.1\r\n"
-                << "Host: " << m_host << "\r\n"
+        request << "GET "   << slashed_object << " HTTP/1.1\r\n"
+                << "Host: " << req.host() << "\r\n"
                 << "User-Agent: Kurts Get Program\r\n"
                 << "Connection: Close\r\n";
-        if (user != "") {
+        if (req.user() != "") {
 #ifdef HAVE_OPENSSL
             std::stringstream auth;
-            auth << user << ":" << pw;
+            auth << req.user() << ":" << req.pw();
             Base64 base64(auth.str());
             request << "Authorization: Basic "
                     << base64.encode() << "\r\n";

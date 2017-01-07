@@ -37,12 +37,11 @@ using KeyPairVector = std::vector<std::pair<std::string, std::string> >;
 class SFTPMethod : Method
 {
 public:
-    SFTPMethod(const std::string& host, const std::string& object) :
-        Method(host, object)
+    SFTPMethod() :
+        Method()
     {}
 
-    virtual void get(const std::string& fileToSave, const std::string& user = "",
-                     const std::string& pw = "") const override;
+    virtual void get(const Request& req) const override;
 
 private:
     static SSHInit m_ssh_init;

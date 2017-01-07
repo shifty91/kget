@@ -25,12 +25,25 @@
 /**
  * This class represents an user request.
  */
-class Request
+class Request final
 {
 public:
-    Request(const std::string& host, const std::string& object) :
-        m_host{host}, m_object{object}
+    Request(const std::string& method, const std::string& host,
+            const std::string& object, const std::string& out_file_name,
+            const std::string& user = "", const std::string& pw = "") :
+        m_method{method}, m_host{host}, m_object{object},
+        m_out_file_name{out_file_name}, m_user{user}, m_pw{pw}
     {}
+
+    inline const std::string& method() const noexcept
+    {
+        return m_method;
+    }
+
+    inline std::string& method() noexcept
+    {
+        return m_method;
+    }
 
     inline const std::string& host() const noexcept
     {
@@ -52,9 +65,43 @@ public:
         return m_object;
     }
 
+    inline const std::string& out_file_name() const noexcept
+    {
+        return m_out_file_name;
+    }
+
+    inline std::string& out_file_name() noexcept
+    {
+        return m_out_file_name;
+    }
+
+    inline const std::string& user() const noexcept
+    {
+        return m_user;
+    }
+
+    inline std::string& user() noexcept
+    {
+        return m_user;
+    }
+
+    inline const std::string& pw() const noexcept
+    {
+        return m_pw;
+    }
+
+    inline std::string& pw() noexcept
+    {
+        return m_pw;
+    }
+
 private:
+    std::string m_method;
     std::string m_host;
     std::string m_object;
+    std::string m_out_file_name;
+    std::string m_user;
+    std::string m_pw;
 };
 
 #endif /* _REQUEST_H_ */

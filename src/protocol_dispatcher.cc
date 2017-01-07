@@ -34,47 +34,50 @@
 
 #include "protocol_dispatcher.h"
 
+Request ProtocolDispatcher::build_request() const
+{
+    URLParser parser(m_url);
+    std::string name;
+
+    parser.parse();
+    log_dbg("Parsing results...");
+    log_dbg("  Method: " << parser.method());
+    log_dbg("  Host: "   << parser.host()  );
+    log_dbg("  Object: " << parser.object());
+
+    if (m_output == "") {
+        name = GET_BASENAME(parser.object().c_str());
+        if (name == "")
+            EXCEPTION("URL does not have a valid object.");
+    } else
+        name = m_output;
+
+    return { parser.method(), parser.host(), parser.object(), name, m_user, m_pw };
+}
+
 void ProtocolDispatcher::dispatch()
 {
     Config *config = Config::instance();
 
     while (42) {
-        URLParser parser(m_url);
-        std::string name;
-
-        parser.parse();
-        log_dbg("Parsing results...");
-        log_dbg("  Method: " << parser.method());
-        log_dbg("  Host: "   << parser.host()  );
-        log_dbg("  Object: " << parser.object());
-
-        if (m_output == "") {
-            name = GET_BASENAME(parser.object().c_str());
-            if (name == "")
-                EXCEPTION("URL does not have a valid object.");
-        } else
-            name = m_output;
+        auto req = build_request();
 
         // here: catch only redirect|auth exceptions, everything else is just forwarded
         try {
-            if (parser.method() == "http") {
-                HTTPMethod<> http(parser.host(), parser.object());
-                http.get(name, m_user, m_pw);
+            if (req.method() == "http") {
+                HTTPMethod<>().get(req);
 #ifdef HAVE_OPENSSL
-            } else if (parser.method() == "https") {
-                HTTPMethod<TCPSSLConnection> https(parser.host(), parser.object());
-                https.get(name, m_user, m_pw);
+            } else if (req.method() == "https") {
+                HTTPMethod<TCPSSLConnection>().get(req);
 #endif
-            } else if (parser.method() == "ftp") {
-                FTPMethod ftp(parser.host(), parser.object());
-                ftp.get(name, m_user, m_pw);
+            } else if (req.method() == "ftp") {
+                FTPMethod().get(req);
 #ifdef HAVE_LIBSSH
-            } else if (parser.method() == "sftp") {
-                SFTPMethod sftp(parser.host(), parser.object());
-                sftp.get(name, m_user, m_pw);
+            } else if (req.method() == "sftp") {
+                SFTPMethod().get(req);
 #endif
             } else {
-                EXCEPTION("The method " << parser.method() <<
+                EXCEPTION("The method " << req.method() <<
                           " is not supported right now.");
             }
         } catch (const RedirectException& ex) {
@@ -93,7 +96,7 @@ void ProtocolDispatcher::dispatch()
             continue;
         }
 
-        log_info("File saved to " << name);
+        log_info("File saved to " << req.out_file_name());
 
         break;
     }

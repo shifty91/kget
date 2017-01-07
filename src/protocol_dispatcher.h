@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "request.h"
+
 class ProtocolDispatcher
 {
 public:
@@ -37,6 +39,8 @@ private:
     std::string m_user;
     std::string m_pw;
     std::string m_output;
+
+    Request build_request() const;
 };
 
 #endif /* _PROTOCOL_DISPATCHER_H_ */

@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "tcp_connection.h"
+#include "request.h"
 
 /**
  * This class provides the interface for a supported method.
@@ -30,19 +30,13 @@
 class Method
 {
 public:
-    Method(const std::string& host, const std::string& object) :
-        m_host{host}, m_object{object}
+    Method()
     {}
 
     virtual ~Method()
     {}
 
-    virtual void get(const std::string& fileToSave, const std::string& user = "",
-                     const std::string& pw = "") const = 0;
-
-protected:
-    std::string m_host;
-    std::string m_object;
+    virtual void get(const Request& req) const = 0;
 };
 
 #endif /* _METHOD_H_ */

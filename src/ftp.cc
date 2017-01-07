@@ -33,36 +33,35 @@
         check_response(tcp, response, __FILE__, __LINE__);  \
     } while (0)
 
-void FTPMethod::get(const std::string& fileToSave, const std::string& user,
-                    const std::string& pw) const
+void FTPMethod::get(const Request& req) const
 {
     TCPConnection tcp, tcp_pasv;
     int response, pasv_port;
     std::size_t len = 0;
     Config *config = Config::instance();
 
-    tcp.connect(m_host, "ftp");
+    tcp.connect(req.host(), "ftp");
     CHECK_RESPONSE(tcp, 220);
 
-    if (user == "")
+    if (req.user() == "")
         tcp.write("USER anonymous\r\n");
     else
-        TCP_WRITE(tcp, "USER " << user << "\r\n");
+        TCP_WRITE(tcp, "USER " << req.user() << "\r\n");
     CHECK_RESPONSE(tcp, 331);
-    if (pw == "")
+    if (req.pw() == "")
         tcp.write("PASS asdf\r\n");
     else
-        TCP_WRITE(tcp, "PASS " << pw << "\r\n");
+        TCP_WRITE(tcp, "PASS " << req.pw() << "\r\n");
     CHECK_RESPONSE(tcp, 230);
 
-    log_dbg("Logged into FTP server at " << m_host);
+    log_dbg("Logged into FTP server at " << req.host());
 
     // change to binary mode
     tcp.write("TYPE I\r\n");
     CHECK_RESPONSE(tcp, 200);
 
     // get size
-    TCP_WRITE(tcp, "SIZE " << m_object << "\r\n");
+    TCP_WRITE(tcp, "SIZE " << req.object() << "\r\n");
     auto line = tcp.read_ln();
     response = ftp_ret_code(line);
     if (response == 213) {
@@ -93,16 +92,16 @@ void FTPMethod::get(const std::string& fileToSave, const std::string& user,
     log_dbg("PASV p0rt is " << pasv_port);
 
     // connect to ftp data
-    tcp_pasv.connect(m_host, pasv_port);
+    tcp_pasv.connect(req.host(), pasv_port);
 
     // get file
-    TCP_WRITE(tcp, "RETR " << m_object << "\r\n");
+    TCP_WRITE(tcp, "RETR " << req.object() << "\r\n");
     CHECK_RESPONSE(tcp, 150);
 
     // fetch it and save to file
-    std::ofstream ofs(fileToSave);
+    std::ofstream ofs(req.out_file_name());
     if (ofs.fail())
-        EXCEPTION("Failed to open file: " << fileToSave);
+        EXCEPTION("Failed to open file: " << req.out_file_name());
     if (config->show_pg())
         tcp_pasv.read_until_eof_with_pg_to_fstream(ofs, len);
     else

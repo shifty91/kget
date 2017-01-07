@@ -26,15 +26,14 @@
 class FTPMethod : Method
 {
 public:
-    FTPMethod(const std::string& host, const std::string& object) :
-        Method(host, object)
+    FTPMethod() :
+        Method()
     {}
 
     virtual ~FTPMethod()
     {}
 
-    virtual void get(const std::string& fileToSave, const std::string& user = "",
-                     const std::string& pw = "") const override;
+    virtual void get(const Request& req) const override;
 
 private:
     int ftp_ret_code(const std::string& response) const;
