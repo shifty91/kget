@@ -44,24 +44,24 @@ void FTPMethod::get(const Request& req) const
     CHECK_RESPONSE(tcp, 220);
 
     if (req.user() == "")
-        tcp.write("USER anonymous\r\n");
+        tcp << "USER anonymous\r\n";
     else
-        TCP_WRITE(tcp, "USER " << req.user() << "\r\n");
+        tcp << "USER " << req.user() << "\r\n";
     CHECK_RESPONSE(tcp, 331);
     if (req.pw() == "")
-        tcp.write("PASS asdf\r\n");
+        tcp << "PASS asdf\r\n";
     else
-        TCP_WRITE(tcp, "PASS " << req.pw() << "\r\n");
+        tcp << "PASS " << req.pw() << "\r\n";
     CHECK_RESPONSE(tcp, 230);
 
     log_dbg("Logged into FTP server at " << req.host());
 
     // change to binary mode
-    tcp.write("TYPE I\r\n");
+    tcp << "TYPE I\r\n";
     CHECK_RESPONSE(tcp, 200);
 
     // get size
-    TCP_WRITE(tcp, "SIZE " << req.object() << "\r\n");
+    tcp << "SIZE " << req.object() << "\r\n";
     auto line = tcp.read_ln();
     response = ftp_ret_code(line);
     if (response == 213) {
@@ -70,7 +70,7 @@ void FTPMethod::get(const Request& req) const
     }
 
     // PASV/EPSV
-    tcp.write("PASV\r\n");
+    tcp << "PASV\r\n";
     line = tcp.read_ln();
     response = ftp_ret_code(line);
 
@@ -78,7 +78,7 @@ void FTPMethod::get(const Request& req) const
         pasv_port = ftp_pasv_port(line);
     } else if (response == 501) {
         // hmz, PASV might not be supported -> trying EPSV
-        tcp.write("EPSV\r\n");
+        tcp << "EPSV\r\n";
         line = tcp.read_ln();
         CHECK_RESPONSE(line, 229);
         pasv_port = ftp_epsv_port(line);
@@ -95,7 +95,7 @@ void FTPMethod::get(const Request& req) const
     tcp_pasv.connect(req.host(), pasv_port);
 
     // get file
-    TCP_WRITE(tcp, "RETR " << req.object() << "\r\n");
+    tcp << "RETR " << req.object() << "\r\n";
     CHECK_RESPONSE(tcp, 150);
 
     // fetch it and save to file
@@ -110,7 +110,7 @@ void FTPMethod::get(const Request& req) const
 
     // done
     CHECK_RESPONSE(tcp, 226);
-    tcp.write("QUIT\r\n");
+    tcp << "QUIT\r\n";
     CHECK_RESPONSE(tcp, 221);
 }
 

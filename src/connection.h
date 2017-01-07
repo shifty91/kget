@@ -26,13 +26,6 @@
 
 #include "logger.h"
 
-#define TCP_WRITE(tcp, msg)                     \
-    do {                                        \
-        std::stringstream ss;                   \
-        ss << msg;                              \
-        (tcp).write(ss.str());                  \
-    } while (0)
-
 class Connection
 {
 public:
@@ -75,6 +68,15 @@ public:
     virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t fileSize) const = 0;
 
     virtual std::string read_ln() const = 0;
+
+    template<typename T>
+    inline Connection& operator<< (T&& arg)
+    {
+        std::stringstream ss;
+        ss << std::forward<T>(arg);
+        this->write(ss.str());
+        return *this;
+    }
 
 protected:
     // Buffer size for read(2) used in TCP connections

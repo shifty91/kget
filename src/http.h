@@ -79,7 +79,7 @@ public:
         tcp.connect(req.host(), HTTPHelpers::Service<CONNECTION>::PORT);
         request = build_http_request(req);
 
-        tcp.write(request);
+        tcp << request;
 
         header = read_http_header(tcp);
         check_response_code(header);
