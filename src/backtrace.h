@@ -34,7 +34,7 @@
 class BackTrace
 {
 public:
-    inline BackTrace()
+    inline BackTrace() noexcept
     {
         m_size    = backtrace(m_array, MAX_STACK_SIZE);
         m_strings = backtrace_symbols(m_array, m_size);
@@ -45,13 +45,13 @@ public:
     BackTrace& operator=(const BackTrace& other) = delete;
     BackTrace& operator=(const BackTrace&& other) = delete;
 
-    inline ~BackTrace()
+    inline ~BackTrace() noexcept
     {
         if (m_strings)
             free(m_strings);
     }
 
-    inline void print_bt() const
+    inline void print_bt() const noexcept
     {
         if (m_size == 0 || !m_strings)
             return;
@@ -62,7 +62,7 @@ public:
     }
 
 private:
-    static const std::size_t MAX_STACK_SIZE = 10;
+    static constexpr std::size_t MAX_STACK_SIZE = 10;
 
     std::size_t m_size;
     void *m_array[MAX_STACK_SIZE];
