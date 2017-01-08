@@ -62,7 +62,7 @@ public:
     }
 
 private:
-    static constexpr std::size_t MAX_STACK_SIZE = 10;
+    static constexpr std::size_t MAX_STACK_SIZE = 64;
 
     std::size_t m_size;
     void *m_array[MAX_STACK_SIZE];
