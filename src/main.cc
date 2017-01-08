@@ -32,8 +32,6 @@
 
 static struct option long_opts[] = {
     { "progress", no_argument,       NULL, 'p' },
-    { "user",     required_argument, NULL, 'u' },
-    { "pass",     required_argument, NULL, 'k' },
     { "follow",   no_argument,       NULL, 'f' },
     { "verify",   no_argument,       NULL, 'v' },
     { "sslv2",    no_argument,       NULL, '2' },
@@ -52,8 +50,6 @@ void print_usage_and_die(int die)
     std::cerr << "  options:" << std::endl;
     std::cerr << "    --progress, -p   : show progressbar if available" << std::endl;
     std::cerr << "    --output, -o     : specify output file name" << std::endl;
-    std::cerr << "    --user, -u <user>: username" << std::endl;
-    std::cerr << "    --pass, -k <pw>  : password" << std::endl;
     std::cerr << "    --follow, -f     : do not follow HTTP redirects" << std::endl;
     std::cerr << "    --verify, -v     : verify server's SSL certificate" << std::endl;
     std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
@@ -69,7 +65,7 @@ int main(int argc, char *argv[])
     // parse args
     auto *config = Config::instance();
     std::vector<std::string> urls;
-    std::string user, pw, output;
+    std::string output;
     int c;
 
     if (argc <= 1)
@@ -82,12 +78,6 @@ int main(int argc, char *argv[])
             break;
         case 'f':
             config->follow_redirects() = false;
-            break;
-        case 'u':
-            user = optarg;
-            break;
-        case 'k':
-            pw = optarg;
             break;
         case 'v':
             config->verify_peer() = true;
@@ -121,7 +111,7 @@ int main(int argc, char *argv[])
     // dispatch
     for (auto&& url: urls) {
         try {
-            ProtocolDispatcher dispatcher(url, user, pw, output);
+            ProtocolDispatcher dispatcher(url, output);
             dispatcher.dispatch();
         } catch (const std::exception&) {
             log_info("Unfortunately an error has occured :(. For more information read "

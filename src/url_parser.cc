@@ -25,15 +25,37 @@
 
 void URLParser::parse()
 {
-    std::regex pattern("(\\w+)://(.+?)/(.+)");
+    std::regex re_simple("(\\w+)://(.+?)/(.+)");
+    std::regex re_user("(\\w+)://(.+?)@(.+?)/(.+)");
+    std::regex re_pw("(\\w+)://(.+?):(.+?)@(.+?)/(.+)");
     std::smatch match;
 
-    std::regex_match(m_url, match, pattern);
+    if (std::regex_match(m_url, match, re_pw)) {
+        log_dbg("URL with username and password detected. Parsing successful.");
+        m_method = match[1];
+        m_user   = match[2];
+        m_pw     = match[3];
+        m_host   = match[4];
+        m_object = match[5];
+        return;
+    }
 
-    if (match.size() != 4)
-        EXCEPTION("Failed to parse url: " << m_url);
+    if (std::regex_match(m_url, match, re_user)) {
+        log_dbg("URL with username detected. Parsing successful.");
+        m_method = match[1];
+        m_user   = match[2];
+        m_host   = match[3];
+        m_object = match[4];
+        return;
+    }
 
-    m_method = match[1];
-    m_host   = match[2];
-    m_object = match[3];
+    if (std::regex_match(m_url, match, re_simple)) {
+        log_dbg("Simple URL detected. Parsing successful.");
+        m_method = match[1];
+        m_host   = match[2];
+        m_object = match[3];
+        return;
+    }
+
+    EXCEPTION("Failed to parse url: " << m_url);
 }

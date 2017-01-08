@@ -56,10 +56,6 @@ Request ProtocolDispatcher::build_request() const
     std::string name;
 
     parser.parse();
-    log_dbg("Parsing results...");
-    log_dbg("  Method: " << parser.method());
-    log_dbg("  Host: "   << parser.host()  );
-    log_dbg("  Object: " << parser.object());
 
     if (m_output == "") {
         name = GET_BASENAME(parser.object().c_str());
@@ -68,18 +64,25 @@ Request ProtocolDispatcher::build_request() const
     } else
         name = m_output;
 
-    return { parser.method(), parser.host(), parser.object(), name, m_user, m_pw };
+    return { parser.method(), parser.host(), parser.object(), name, parser.user(), parser.pw() };
 }
 
 void ProtocolDispatcher::dispatch()
 {
     Config *config = Config::instance();
+    std::string user, pw;
 
     if (!initialized)
         init();
 
     while (42) {
         auto req = build_request();
+
+        // user/pw might be overriden by user input if auth fails
+        if (!user.empty())
+            req.user() = user;
+        if (!pw.empty())
+            req.pw() = pw;
 
         // here: catch only redirect|auth exceptions, everything else is just forwarded
         try {
@@ -99,8 +102,8 @@ void ProtocolDispatcher::dispatch()
             break;
         } catch (const AuthException&) {
             log_info("HTTP Authorization detected. Please provide your credentials: ");
-            m_user = Utils::user_input("Username");
-            m_pw   = Utils::user_input_pw("Password");
+            user = Utils::user_input("Username");
+            pw   = Utils::user_input_pw("Password");
             continue;
         }
 

@@ -46,11 +46,23 @@ public:
         return m_object;
     }
 
+    inline const std::string& user() const noexcept
+    {
+        return m_user;
+    }
+
+    inline const std::string& pw() const noexcept
+    {
+        return m_pw;
+    }
+
 private:
     const std::string& m_url;
     std::string m_method;
     std::string m_host;
     std::string m_object;
+    std::string m_user;
+    std::string m_pw;
 };
 
 #endif /* _URL_PARSER_H_ */

@@ -32,9 +32,8 @@ class ProtocolDispatcher
 public:
     using ProtoMap = std::unordered_map<std::string, std::unique_ptr<Method> >;
 
-    ProtocolDispatcher(const std::string& url, const std::string& user = "",
-                       const std::string& pw = "", const std::string& output = "") :
-        m_url{url}, m_user{user}, m_pw{pw}, m_output{output}
+    ProtocolDispatcher(const std::string& url, const std::string& output = "") :
+        m_url{url}, m_output{output}
     {}
 
     void dispatch();
@@ -49,8 +48,6 @@ private:
     static void init();
 
     std::string m_url;
-    std::string m_user;
-    std::string m_pw;
     std::string m_output;
 
     Request build_request() const;
