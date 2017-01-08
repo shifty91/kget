@@ -45,10 +45,10 @@ public:
     }
 
     TCPConnection(const TCPConnection& other) = delete;
-    TCPConnection(const TCPConnection&& other) = delete;
+    TCPConnection(TCPConnection&& other) = delete;
 
     TCPConnection& operator=(const TCPConnection& other) = delete;
-    TCPConnection& operator=(const TCPConnection&& other) = delete;
+    TCPConnection& operator=(TCPConnection&& other) = delete;
 
     inline int socket() const
     {

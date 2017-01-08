@@ -58,10 +58,10 @@ public:
     }
 
     SSLContext(const SSLContext& other) = delete;
-    SSLContext(const SSLContext&& other) = delete;
+    SSLContext(SSLContext&& other) = delete;
 
     SSLContext& operator=(const SSLContext& other) = delete;
-    SSLContext& operator=(const SSLContext&& other) = delete;
+    SSLContext& operator=(SSLContext&& other) = delete;
 
     inline SSL_CTX *context() const noexcept
     {

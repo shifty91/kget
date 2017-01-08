@@ -61,9 +61,9 @@ public:
     }
 
     SSLHandle(const SSLHandle& other) = delete;
-    SSLHandle(const SSLHandle&& other) = delete;
+    SSLHandle(SSLHandle&& other) = delete;
     SSLHandle& operator=(const SSLHandle& other) = delete;
-    SSLHandle& operator=(const SSLHandle&& other) = delete;
+    SSLHandle& operator=(SSLHandle&& other) = delete;
 
     inline void connect()
     {

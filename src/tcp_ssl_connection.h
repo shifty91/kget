@@ -51,10 +51,10 @@ public:
     }
 
     TCPSSLConnection(const TCPSSLConnection& other) = delete;
-    TCPSSLConnection(const TCPSSLConnection&& other) = delete;
+    TCPSSLConnection(TCPSSLConnection&& other) = delete;
 
     TCPSSLConnection& operator=(const TCPSSLConnection& other) = delete;
-    TCPSSLConnection& operator=(const TCPSSLConnection&& other) = delete;
+    TCPSSLConnection& operator=(TCPSSLConnection&& other) = delete;
 
     virtual void connect(const std::string& host, const std::string& service) override;
 

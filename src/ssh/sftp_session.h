@@ -52,9 +52,9 @@ public:
     }
 
     SFTPSession(const SFTPSession& other) = delete;
-    SFTPSession(const SFTPSession&& other) = delete;
+    SFTPSession(SFTPSession&& other) = delete;
     SFTPSession& operator=(const SFTPSession& other) = delete;
-    SFTPSession& operator=(const SFTPSession&& other) = delete;
+    SFTPSession& operator=(SFTPSession&& other) = delete;
 
     inline LIBSSH2_SFTP *session() noexcept
     {

@@ -50,9 +50,9 @@ public:
     }
 
     SSHSession(const SSHSession& other) = delete;
-    SSHSession(const SSHSession&& other) = delete;
+    SSHSession(SSHSession&& other) = delete;
     SSHSession& operator=(const SSHSession& other) = delete;
-    SSHSession& operator=(const SSHSession&& other) = delete;
+    SSHSession& operator=(SSHSession&& other) = delete;
 
     inline LIBSSH2_SESSION *session() noexcept
     {

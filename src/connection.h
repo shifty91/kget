@@ -37,10 +37,10 @@ public:
     {}
 
     Connection(const Connection& other) = delete;
-    Connection(const Connection&& other) = delete;
+    Connection(Connection&& other) = delete;
 
     Connection& operator=(const Connection& other) = delete;
-    Connection& operator=(const Connection&& other) = delete;
+    Connection& operator=(Connection&& other) = delete;
 
     inline int socket() const
     {

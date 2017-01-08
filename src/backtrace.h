@@ -41,9 +41,9 @@ public:
     }
 
     BackTrace(const BackTrace& other) = delete;
-    BackTrace(const BackTrace&& other) = delete;
+    BackTrace(BackTrace&& other) = delete;
     BackTrace& operator=(const BackTrace& other) = delete;
-    BackTrace& operator=(const BackTrace&& other) = delete;
+    BackTrace& operator=(BackTrace&& other) = delete;
 
     inline ~BackTrace() noexcept
     {

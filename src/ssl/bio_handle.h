@@ -47,9 +47,9 @@ public:
     }
 
     BIOHandle(const BIOHandle& handle) = delete;
-    BIOHandle(const BIOHandle&& handle) = delete;
+    BIOHandle(BIOHandle&& handle) = delete;
     BIOHandle& operator=(const BIOHandle& handle) = delete;
-    BIOHandle& operator=(const BIOHandle&& handle) = delete;
+    BIOHandle& operator=(BIOHandle&& handle) = delete;
 
     inline BIO *handle() noexcept
     {
