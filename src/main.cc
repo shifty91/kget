@@ -55,9 +55,19 @@ void print_usage_and_die(int die)
     std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
     std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
     std::cerr << "    --debug, -d      : enable debug output" << std::endl;
+    std::cerr << "    --help, -h       : print this help" << std::endl;
+    std::cerr << "    --version, -x    : print version information" << std::endl;
     std::cerr << "get version " << VERSION << " (C) Kurt Kanzenbach <kurt@kmk-computers.de>"
               << std::endl;
     std::exit(die ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+[[noreturn]] static inline
+void print_version_and_die()
+{
+    std::cerr << "get version " << VERSION << " (C) Kurt Kanzenbach <kurt@kmk-computers.de>"
+              << std::endl;
+    std::exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -71,7 +81,7 @@ int main(int argc, char *argv[])
     if (argc <= 1)
         print_usage_and_die(1);
 
-    while ((c = getopt_long(argc, argv, "23dvpfu:k:o:", long_opts, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "23dvpfu:k:o:xh", long_opts, NULL)) != -1) {
         switch (c) {
         case 'p':
             config->show_pg() = true;
@@ -95,6 +105,7 @@ int main(int argc, char *argv[])
             config->debug() = true;
             break;
         case 'x':
+            print_version_and_die();
         case 'h':
             print_usage_and_die(0);
         default:
