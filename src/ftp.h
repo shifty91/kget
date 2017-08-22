@@ -44,6 +44,8 @@ private:
     std::size_t ftp_size(const std::string& line) const;
     int ftp_pasv_port(const std::string& line) const;
     int ftp_epsv_port(const std::string& line) const;
+    std::string read_response(const TCPConnection& tcp) const;
+    bool is_reponse(const std::string& line) const;
 };
 
 #endif /* _FTP_H_ */
