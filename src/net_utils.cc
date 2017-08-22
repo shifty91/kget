@@ -96,3 +96,15 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 
     return sock;
 }
+
+void NetUtils::set_default_timeout(int sock)
+{
+    struct timeval tv;
+
+    tv.tv_sec = 30;
+    tv.tv_usec = 0;
+
+    if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv,
+                   sizeof(struct timeval)))
+        EXCEPTION("setsockopt() failed: " << strerror(errno));
+}

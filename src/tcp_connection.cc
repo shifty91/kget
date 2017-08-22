@@ -41,6 +41,7 @@ void TCPConnection::connect(const std::string& host, const std::string& service)
 {
     close();
     m_sock = NetUtils::tcp_connect(host, service);
+    NetUtils::set_default_timeout(m_sock);
     m_connected = true;
 }
 
