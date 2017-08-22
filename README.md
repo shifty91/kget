@@ -16,6 +16,9 @@ the same thing as BSD's fetch.
         --sslv2, -2      : use SSL version 2
         --sslv3, -3      : use SSL version 3
         --debug, -d      : enable debug output
+        --help, -h       : print this help
+        --version, -x    : print version information
+    get version 1.8 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
 
 Supported right now:
 
