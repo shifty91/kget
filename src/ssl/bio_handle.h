@@ -35,7 +35,8 @@ public:
         m_handle{nullptr}
     {}
 
-    inline explicit BIOHandle(BIO_METHOD *type)
+    template<typename T>
+    inline explicit BIOHandle(T&& type)
     {
         new_bio(type);
     }
@@ -56,7 +57,8 @@ public:
         return m_handle;
     }
 
-    inline void new_bio(BIO_METHOD *type)
+    template<typename T>
+    inline void new_bio(T&& type)
     {
         m_handle = BIO_new(type);
         if (m_handle == nullptr)
