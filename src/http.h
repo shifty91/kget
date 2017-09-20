@@ -139,18 +139,18 @@ private:
     int check_response_code(const std::vector<std::string>& header) const
     {
         int code;
-        const auto& firstLine = header[0];
+        auto&& first_line = header[0];
         std::regex pattern("HTTP/(\\d+\\.\\d+)\\s*(\\d+).*\\r\\n");
         std::smatch match;
-        std::string codeStr;
+        std::string code_str;
 
-        std::regex_match(firstLine, match, pattern);
+        std::regex_match(first_line, match, pattern);
 
         if (match.size() != 3)
             EXCEPTION("Received malformed HTTP Header!");
 
-        codeStr = match[2];
-        code = std::atoi(codeStr.c_str());
+        code_str = match[2];
+        code = std::atoi(code_str.c_str());
         if (code == 404)
             EXCEPTION("The requested object cannot be found on the server!");
 
@@ -171,12 +171,12 @@ private:
     std::vector<std::string> read_http_header(const CONNECTION& tcp) const
     {
         std::vector<std::string> result;
-        std::string line, lastLine;
+        std::string line, last_line;
 
         result.reserve(10);
 
-        while (line != "\r\n" && lastLine != "\r\n") {
-            lastLine = line;
+        while (line != "\r\n" && last_line != "\r\n") {
+            last_line = line;
             line = tcp.read_ln();
             result.push_back(line);
         }
@@ -186,7 +186,7 @@ private:
 
     std::size_t get_content_length(const std::vector<std::string>& header) const
     {
-        for (const auto& line : header) {
+        for (auto&& line : header) {
             std::regex pattern("Content-Length:\\s*(\\d+)\\s*\\r\\n");
             std::smatch match;
 
