@@ -45,6 +45,16 @@ public:
         m_width = m_cols * 50 / 100;
     }
 
+    ProgressBar(std::size_t start_offset, std::size_t bytes) :
+        m_cols{Utils::terminal_width()},
+        m_bytes{bytes}, m_bytes_received{start_offset}, m_old_position{0},
+        m_old_time{std::chrono::high_resolution_clock::now()},
+        m_old_byte_cnt{0}
+    {
+        // taking like 50 %
+        m_width = m_cols * 50 / 100;
+    }
+
     void update(std::size_t new_bytes = 1);
 
 private:

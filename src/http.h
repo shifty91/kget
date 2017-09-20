@@ -74,7 +74,9 @@ public:
         CONNECTION tcp;
         std::string request;
         std::vector<std::string> header;
+        std::ios_base::openmode mode = std::ios_base::out;
         Config *config = Config::instance();
+        int response;
 
         tcp.connect(req.host(), HTTPHelpers::Service<CONNECTION>::PORT);
         request = build_http_request(req);
@@ -82,16 +84,18 @@ public:
         tcp << request;
 
         header = read_http_header(tcp);
-        check_response_code(header);
+        response = check_response_code(header);
 
         auto length = get_content_length(header);
 
         // save
-        std::ofstream ofs(req.out_file_name());
+        if (response == 206)
+            mode |= std::ios_base::app;
+        std::ofstream ofs(req.out_file_name(), mode);
         if (ofs.fail())
             EXCEPTION("Failed to open file: " << req.out_file_name());
         if (length > 0 && config->show_pg())
-            tcp.read_until_eof_with_pg_to_fstream(ofs, length);
+            tcp.read_until_eof_with_pg_to_fstream(ofs, req.start_offset(), length);
         else
             tcp.read_until_eof_to_fstream(ofs);
     }
@@ -123,12 +127,16 @@ private:
             EXCEPTION("OpenSSL is needed for HTTP Basic Auth.");
 #endif
         }
+        if (req.start_offset() > 0) {
+            log_dbg("Trying to continue file download @ " << req.start_offset() << " bytes");
+            request << "Range: bytes=" << req.start_offset() << "-\r\n";
+        }
         request << "\r\n";
 
         return request.str();
     }
 
-    void check_response_code(const std::vector<std::string>& header) const
+    int check_response_code(const std::vector<std::string>& header) const
     {
         int code;
         const auto& firstLine = header[0];
@@ -154,8 +162,10 @@ private:
         if (code == 401)
             throw AuthException();
 
-        if (code != 200)
+        if (code != 200 && code != 206)
             EXCEPTION("Received unexpected response code from server: " << code);
+
+        return code;
     }
 
     std::vector<std::string> read_http_header(const CONNECTION& tcp) const

@@ -77,7 +77,7 @@ public:
 
     virtual void read_until_eof_to_fstream(std::ofstream& ofs) const override;
 
-    virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t fileSize) const override;
+    virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t fileSize) const override;
 
     virtual std::string read_ln() const override;
 
