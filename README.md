@@ -11,6 +11,7 @@ the same thing as BSD's fetch.
       options:
         --progress, -p   : show progressbar if available
         --output, -o     : specify output file name
+        --continue, -c   : continue file download
         --follow, -f     : do not follow HTTP redirects
         --verify, -v     : verify server's SSL certificate
         --sslv2, -2      : use SSL version 2
