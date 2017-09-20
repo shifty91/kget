@@ -66,7 +66,8 @@ Request ProtocolDispatcher::build_request() const
         name = m_output;
 
     if (Config::instance()->continue_download())
-        start_offset = Utils::file_size(name);
+        if (Utils::file_exists(name))
+            start_offset = Utils::file_size(name);
 
     return { parser.method(), parser.host(), parser.object(), name,
              parser.user(), parser.pw(), start_offset };
