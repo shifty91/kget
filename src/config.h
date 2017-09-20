@@ -95,12 +95,22 @@ public:
         return m_debug;
     }
 
+    inline const bool& continue_download() const noexcept
+    {
+        return m_continue;
+    }
+
+    inline bool& continue_download() noexcept
+    {
+        return m_continue;
+    }
+
 private:
     static Config *m_instance;
 
     Config() :
         m_show_pg{false}, m_follow_redirects{true}, m_verify_peer{false},
-        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}
+        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}, m_continue{false}
     {}
 
     bool m_show_pg;
@@ -109,6 +119,7 @@ private:
     bool m_use_sslv2;
     bool m_use_sslv3;
     bool m_debug;
+    bool m_continue;
 };
 
 #endif /* _CONFIG_H_ */

@@ -54,6 +54,7 @@ Request ProtocolDispatcher::build_request() const
 {
     URLParser parser(m_url);
     std::string name;
+    std::size_t start_offset = 0;
 
     parser.parse();
 
@@ -64,7 +65,11 @@ Request ProtocolDispatcher::build_request() const
     } else
         name = m_output;
 
-    return { parser.method(), parser.host(), parser.object(), name, parser.user(), parser.pw() };
+    if (Config::instance()->continue_download())
+        start_offset = Utils::file_size(name);
+
+    return { parser.method(), parser.host(), parser.object(), name,
+             parser.user(), parser.pw(), start_offset };
 }
 
 void ProtocolDispatcher::dispatch()

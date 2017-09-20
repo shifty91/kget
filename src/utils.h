@@ -28,6 +28,8 @@
 #include <unistd.h>
 #include <cstring>
 
+#include <sys/stat.h>
+
 #include "logger.h"
 
 class Utils
@@ -67,6 +69,16 @@ public:
         // but now, we have to stick with fstream...
         std::ifstream ifs(file);
         return ifs.good();
+    }
+
+    static inline std::size_t file_size(const std::string& file)
+    {
+        struct stat buf;
+
+        if (stat(file.c_str(), &buf))
+            EXCEPTION("Failed to investigate file: " << file << ": "
+                      << strerror(errno));
+        return static_cast<std::size_t>(buf.st_size);
     }
 
     static inline std::string get_home()

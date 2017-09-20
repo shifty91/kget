@@ -30,9 +30,11 @@ class Request final
 public:
     Request(const std::string& method, const std::string& host,
             const std::string& object, const std::string& out_file_name,
-            const std::string& user = "", const std::string& pw = "") :
+            const std::string& user = "", const std::string& pw = "",
+            const size_t start_offset = 0) :
         m_method{method}, m_host{host}, m_object{object},
-        m_out_file_name{out_file_name}, m_user{user}, m_pw{pw}
+        m_out_file_name{out_file_name}, m_user{user}, m_pw{pw},
+        m_start_offset{start_offset}
     {}
 
     inline const std::string& method() const noexcept
@@ -95,6 +97,16 @@ public:
         return m_pw;
     }
 
+    inline const std::size_t& start_offset() const noexcept
+    {
+        return m_start_offset;
+    }
+
+    inline std::size_t& start_offset() noexcept
+    {
+        return m_start_offset;
+    }
+
 private:
     std::string m_method;
     std::string m_host;
@@ -102,6 +114,7 @@ private:
     std::string m_out_file_name;
     std::string m_user;
     std::string m_pw;
+    std::size_t m_start_offset;
 };
 
 #endif /* _REQUEST_H_ */
