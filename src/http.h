@@ -87,6 +87,7 @@ public:
         response = check_response_code(header);
 
         auto length = get_content_length(header);
+        log_dbg("File has a size of " << (length + req.start_offset()) << " bytes.");
 
         // save
         if (response == 206)
@@ -95,7 +96,8 @@ public:
         if (ofs.fail())
             EXCEPTION("Failed to open file: " << req.out_file_name());
         if (length > 0 && config->show_pg())
-            tcp.read_until_eof_with_pg_to_fstream(ofs, req.start_offset(), length);
+            tcp.read_until_eof_with_pg_to_fstream(
+                ofs, req.start_offset(), length + req.start_offset());
         else
             tcp.read_until_eof_to_fstream(ofs);
     }
@@ -192,7 +194,6 @@ private:
 
             if (std::regex_match(line, match, pattern)) {
                 std::string str = match[1];
-                log_dbg("File has a size of " << str << " bytes.");
                 return std::atoll(str.c_str());
             }
         }
