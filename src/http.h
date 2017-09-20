@@ -192,6 +192,7 @@ private:
 
             if (std::regex_match(line, match, pattern)) {
                 std::string str = match[1];
+                log_dbg("File has a size of " << str << " bytes.");
                 return std::atoll(str.c_str());
             }
         }
