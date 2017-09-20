@@ -80,11 +80,11 @@ void TCPSSLConnection::connect(const std::string& host, const std::string& servi
     m_connected = true;
 }
 
-void TCPSSLConnection::write(const std::string& toWrite) const
+void TCPSSLConnection::write(const std::string& to_write) const
 {
     int written = 0;
-    auto len = toWrite.size();
-    auto start = toWrite.c_str();
+    auto len = to_write.size();
+    auto start = to_write.c_str();
 
     if (!m_connected)
         EXCEPTION("Not connected!");
@@ -97,7 +97,7 @@ void TCPSSLConnection::write(const std::string& toWrite) const
     }
 }
 
-std::string TCPSSLConnection::read(std::size_t numBytes) const
+std::string TCPSSLConnection::read(std::size_t num_bytes) const
 {
     std::string result;
     char buffer[BUFFER_SIZE];
@@ -106,8 +106,8 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        auto len = std::min(sizeof(buffer), numBytes - static_cast<int>(read));
+    while (static_cast<decltype(num_bytes)>(read) < num_bytes) {
+        auto len = std::min(sizeof(buffer), num_bytes - static_cast<int>(read));
         auto tmp = m_ssl.read(buffer, len);
         if (tmp <= 0)
             EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
@@ -118,7 +118,7 @@ std::string TCPSSLConnection::read(std::size_t numBytes) const
     return result;
 }
 
-std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
+std::string TCPSSLConnection::read_until_eof(std::size_t file_size) const
 {
     std::string result;
     char buffer[BUFFER_SIZE];
@@ -127,8 +127,8 @@ std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    if (fileSize > 0)
-        result.reserve(fileSize);
+    if (file_size > 0)
+        result.reserve(file_size);
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
@@ -142,9 +142,9 @@ std::string TCPSSLConnection::read_until_eof(std::size_t fileSize) const
     return result;
 }
 
-std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t fileSize) const
+std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t file_size) const
 {
-    ProgressBar pg(fileSize);
+    ProgressBar pg(file_size);
     std::string result;
     char buffer[BUFFER_SIZE];
     int read = 0;
@@ -152,8 +152,8 @@ std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t fileSize) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    if (fileSize > 0)
-        result.reserve(fileSize);
+    if (file_size > 0)
+        result.reserve(file_size);
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp == -1)
@@ -185,9 +185,9 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
     }
 }
 
-void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t fileSize) const
+void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t file_size) const
 {
-    ProgressBar pg(start_offset, fileSize);
+    ProgressBar pg(start_offset, file_size);
     char buffer[BUFFER_SIZE];
 
     if (!m_connected)

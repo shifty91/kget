@@ -67,17 +67,17 @@ public:
         m_connected = false;
     }
 
-    virtual void write(const std::string& toWrite) const override;
+    virtual void write(const std::string& to_write) const override;
 
-    virtual std::string read(std::size_t numBytes) const override;
+    virtual std::string read(std::size_t num_bytes) const override;
 
-    virtual std::string read_until_eof(std::size_t fileSize = 0) const override;
+    virtual std::string read_until_eof(std::size_t file_size = 0) const override;
 
-    virtual std::string read_until_eof_with_pg(std::size_t fileSize) const override;
+    virtual std::string read_until_eof_with_pg(std::size_t file_size) const override;
 
     virtual void read_until_eof_to_fstream(std::ofstream& ofs) const override;
 
-    virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t fileSize) const override;
+    virtual void read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t file_size) const override;
 
     virtual std::string read_ln() const override;
 

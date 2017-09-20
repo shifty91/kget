@@ -45,11 +45,11 @@ void TCPConnection::connect(const std::string& host, const std::string& service)
     m_connected = true;
 }
 
-void TCPConnection::write(const std::string& toWrite) const
+void TCPConnection::write(const std::string& to_write) const
 {
     ssize_t written = 0;
-    auto len = toWrite.size();
-    auto start = toWrite.c_str();
+    auto len = to_write.size();
+    auto start = to_write.c_str();
 
     if (!m_connected)
         EXCEPTION("Not connected!");
@@ -62,7 +62,7 @@ void TCPConnection::write(const std::string& toWrite) const
     }
 }
 
-std::string TCPConnection::read(std::size_t numBytes) const
+std::string TCPConnection::read(std::size_t num_bytes) const
 {
     std::string result;
     char buffer[BUFFER_SIZE];
@@ -71,8 +71,8 @@ std::string TCPConnection::read(std::size_t numBytes) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    while (static_cast<decltype(numBytes)>(read) < numBytes) {
-        auto len = std::min(sizeof(buffer), numBytes - static_cast<std::size_t>(read));
+    while (static_cast<decltype(num_bytes)>(read) < num_bytes) {
+        auto len = std::min(sizeof(buffer), num_bytes - static_cast<std::size_t>(read));
         auto tmp = ::read(m_sock, buffer, len);
         if (tmp < 0)
             EXCEPTION("read() to socket failed: " << strerror(errno));
@@ -85,7 +85,7 @@ std::string TCPConnection::read(std::size_t numBytes) const
     return result;
 }
 
-std::string TCPConnection::read_until_eof(std::size_t fileSize) const
+std::string TCPConnection::read_until_eof(std::size_t file_size) const
 {
     std::string result;
     char buffer[BUFFER_SIZE];
@@ -94,8 +94,8 @@ std::string TCPConnection::read_until_eof(std::size_t fileSize) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    if (fileSize > 0)
-        result.reserve(fileSize);
+    if (file_size > 0)
+        result.reserve(file_size);
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
@@ -109,9 +109,9 @@ std::string TCPConnection::read_until_eof(std::size_t fileSize) const
     return result;
 }
 
-std::string TCPConnection::read_until_eof_with_pg(std::size_t fileSize) const
+std::string TCPConnection::read_until_eof_with_pg(std::size_t file_size) const
 {
-    ProgressBar pg(fileSize);
+    ProgressBar pg(file_size);
     std::string result;
     char buffer[BUFFER_SIZE];
     ssize_t read = 0;
@@ -119,8 +119,8 @@ std::string TCPConnection::read_until_eof_with_pg(std::size_t fileSize) const
     if (!m_connected)
         EXCEPTION("Not connected!");
 
-    if (fileSize > 0)
-        result.reserve(fileSize);
+    if (file_size > 0)
+        result.reserve(file_size);
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
@@ -152,9 +152,9 @@ void TCPConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
     }
 }
 
-void TCPConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t fileSize) const
+void TCPConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::size_t start_offset, std::size_t file_size) const
 {
-    ProgressBar pg(start_offset, fileSize);
+    ProgressBar pg(start_offset, file_size);
     char buffer[BUFFER_SIZE];
 
     if (!m_connected)
