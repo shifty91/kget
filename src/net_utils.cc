@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2015-2017 Kurt Kanzenbach <kurt@kmk-computers.de>
  *
