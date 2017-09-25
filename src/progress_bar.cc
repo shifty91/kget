@@ -28,11 +28,11 @@
 ProgressBar::UnitPair ProgressBar::unit(std::size_t file_size,
                                         unsigned precision) const
 {
-    static const std::array<std::string, 5> units = {
-        { "B" , "KiB", "MiB", "GiB", "TiB" }
+    static const std::array<std::string, 9> units = {
+        { "B" , "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB" }
     };
 
-    std::array<std::string, 5>::size_type i = 0;
+    std::array<std::string, 9>::size_type i = 0;
     double size = file_size;
     while (size >= 1024.0) {
         size /= 1024.0;
@@ -45,7 +45,7 @@ ProgressBar::UnitPair ProgressBar::unit(std::size_t file_size,
     else
         size = std::round(size);
 
-    return { size, units[i] };
+    return { size, units.at(i) };
 }
 
 std::string ProgressBar::build_size() const
