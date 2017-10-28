@@ -4,6 +4,7 @@
 #cmakedefine HAVE_OPENSSL @HAVE_OPENSSL@
 #cmakedefine HAVE_LIBSSH @HAVE_LIBSSH@
 #cmakedefine HAVE_BACKTRACE @HAVE_BACKTRACE@
+#cmakedefine HAVE_CPP17 @HAVE_CPP17@
 #define VERSION "${VERSION}"
 
 #endif /* _GET_CONFIG_H_ */

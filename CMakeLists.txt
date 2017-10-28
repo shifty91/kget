@@ -15,15 +15,24 @@ set(SRCS
   src/net_utils.cc
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -pedantic -Wall -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -march=native")
 set(CMAKE_BUILD_TYPE "Release")
 set(VERSION "1.9")
 
 # check for C++14
 include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++14" COMPILER_SUPPORTS_CXX14)
-if (NOT COMPILER_SUPPORTS_CXX14)
+check_cxx_compiler_flag("-std=c++14" HAVE_CPP14)
+if (NOT HAVE_CPP14)
   message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} has no C++14 support.")
+endif()
+
+# check for C++17
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++17" HAVE_CPP17)
+if (HAVE_CPP17)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
 # Search OpenSSL
