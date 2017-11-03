@@ -25,14 +25,14 @@
 #include "logger.h"
 #include "net_utils.h"
 
-void NetUtils::print_ip(const struct addrinfo *sa)
+std::string NetUtils::get_ip(const struct addrinfo *sa)
 {
     char addr[INET6_ADDRSTRLEN + 1];
     const char *res = NULL;
     void *in_addr = NULL;
 
     if (!sa)
-        return;
+        return "";
 
     switch (sa->ai_family) {
     case AF_INET6:
@@ -44,15 +44,15 @@ void NetUtils::print_ip(const struct addrinfo *sa)
     }
 
     if (!in_addr)
-        return;
+        return "";
 
     res = inet_ntop(sa->ai_family, in_addr, addr, sizeof(addr));
     if (!res) {
         log_dbg("inet_ntop() failed: " << strerror(errno));
-        return;
+        return "";
     }
 
-    log_dbg("Remote IP '" << addr << "'");
+    return addr;
 }
 
 int NetUtils::tcp_connect(const std::string& host, const std::string& service)
@@ -81,7 +81,7 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
         }
 
         if (!connect(sock, sa->ai_addr, sa->ai_addrlen)) {
-            print_ip(sa);
+            log_dbg("Connected to " << host << "(" << get_ip(sa) << ") @ " << service);
             break;
         }
 

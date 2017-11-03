@@ -35,7 +35,7 @@ public:
     static void set_default_timeout(int sock);
 
 private:
-    static void print_ip(const struct addrinfo *sa);
+    static std::string get_ip(const struct addrinfo *sa);
 };
 
 #endif /* _NET_UTILS_H_ */
