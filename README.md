@@ -31,22 +31,30 @@ Example:
 
     $ ./get http://www.gnu.org/licenses/gpl-3.0.txt
 
-## Build ##
+## Build - Linux ##
 
     $ mkdir build
     $ cd build
     $ cmake ..
     $ make -j8
 
+## Build - FreeBSD ##
+
+    $ mkdir build
+    $ cd build
+    $ CC=gcc7 CXX=gcc7 cmake -DCUSTOM_RPATH="/usr/local/lib/gcc7" ..
+    $ make -j8
+
 ## Dependencies ##
 
+- Modern Compiler with CPP 17 Support
 - OpenSSL (optional, used for HTTPS)
 - LibSSH2 (optional, used for SFTP)
 - termios
 
 ## Author ##
 
-Copyright (C) 2015-2016 Kurt Kanzenbach <kurt@kmk-computers.de>
+Copyright (C) 2015-2017 Kurt Kanzenbach <kurt@kmk-computers.de>
 
 ## License ##
 
