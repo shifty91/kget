@@ -27,6 +27,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include "get_config.h"
 #include "logger.h"
@@ -37,29 +38,6 @@
 #include "auth_exception.h"
 #include "base64.h"
 #include "config.h"
-
-namespace HTTPHelpers {
-
-    template<typename CONNECTION>
-    class Service
-    {};
-
-    template<>
-    class Service<TCPConnection>
-    {
-    public:
-        static const int PORT = 80;
-    };
-
-#ifdef HAVE_OPENSSL
-    template<>
-    class Service<TCPSSLConnection>
-    {
-    public:
-        static const int PORT = 443;
-    };
-#endif
-}
 
 template<typename CONNECTION = TCPConnection>
 class HTTPMethod : public Method
@@ -78,7 +56,7 @@ public:
         Config *config = Config::instance();
         int response;
 
-        tcp.connect(req.host(), HTTPHelpers::Service<CONNECTION>::PORT);
+        tcp.connect(req.host(), get_port());
         request = build_http_request(req);
 
         tcp << request;
@@ -103,6 +81,21 @@ public:
     }
 
 private:
+    constexpr auto get_port() const noexcept
+    {
+        static_assert(std::is_same_v<CONNECTION, TCPConnection>
+#ifdef HAVE_OPENSSL
+                      || std::is_same_v<CONNECTION, TCPSSLConnection>
+#endif
+                      , "HTTPMethod may only be used in combination with "
+                      "TCPConnection or TCPSSLConnection");
+
+        if constexpr (std::is_same_v<CONNECTION, TCPConnection>)
+            return 80;
+        else
+            return 443;
+    }
+
     std::string build_http_request(const Request& req) const
     {
         std::stringstream request;
