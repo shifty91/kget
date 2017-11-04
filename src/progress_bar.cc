@@ -52,11 +52,11 @@ std::string ProgressBar::build_size() const
 {
     std::stringstream ss;
 
-    auto unit1 = unit(m_bytes_received);
-    auto unit2 = unit(m_bytes);
+    auto [bytes1, unit1] = unit(m_bytes_received);
+    auto [bytes2, unit2] = unit(m_bytes);
 
-    ss << unit1.first << " " << unit1.second << " / "
-       << unit2.first << " " << unit2.second;
+    ss << bytes1 << " " << unit1 << " / "
+       << bytes2 << " " << unit2;
 
     return ss.str();
 }
@@ -71,11 +71,11 @@ std::string ProgressBar::rate(std::size_t bytes_received)
                  now - m_old_time).count();
     m_old_time = now;
     std::size_t rate = bytes_received / elapsed;
-    auto unit_ = unit(rate, 1);
+    auto [bytes, unit_] = unit(rate, 1);
 
     // build
     std::stringstream ss;
-    ss << unit_.first << " " << unit_.second << "/s";
+    ss << bytes << " " << unit_ << "/s";
     return ss.str();
 }
 
