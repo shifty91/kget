@@ -19,7 +19,7 @@ the same thing as BSD's fetch.
         --debug, -d      : enable debug output
         --help, -h       : print this help
         --version, -x    : print version information
-    get version 1.9 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
+    get version 1.10 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
 
 Supported right now:
 
@@ -31,23 +31,27 @@ Example:
 
     $ ./get http://www.gnu.org/licenses/gpl-3.0.txt
 
-## Build - Linux ##
+## Build ##
+
+### Linux ###
 
     $ mkdir build
     $ cd build
     $ cmake ..
     $ make -j8
+    $ sudo make install
 
-## Build - FreeBSD ##
+### FreeBSD ###
 
     $ mkdir build
     $ cd build
     $ CC=gcc7 CXX=gcc7 cmake -DCUSTOM_RPATH="/usr/local/lib/gcc7" ..
     $ make -j8
+    $ sudo make install
 
 ## Dependencies ##
 
-- Modern Compiler with CPP 17 Support
+- Modern Compiler with CPP 17 Support (e.g. gcc >= 7 or clang >= 5)
 - OpenSSL (optional, used for HTTPS)
 - LibSSH2 (optional, used for SFTP)
 - termios
