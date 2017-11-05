@@ -24,11 +24,10 @@
 #include <cstdlib>
 #include <cstdio>
 #include <fstream>
+#include <experimental/filesystem>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <cstring>
-
-#include <sys/stat.h>
 
 #include "logger.h"
 
@@ -61,24 +60,27 @@ public:
 
     static inline bool file_exists(const std::string& file)
     {
-        // in C++ 17 we can simply use the following
-#if 0
-        using fs = std::filesystem;
+        namespace fs = std::experimental::filesystem;
+
         return fs::exists(file);
-#endif
-        // but now, we have to stick with fstream...
-        std::ifstream ifs(file);
-        return ifs.good();
     }
 
     static inline std::size_t file_size(const std::string& file)
     {
-        struct stat buf;
+        namespace fs = std::experimental::filesystem;
 
-        if (stat(file.c_str(), &buf))
-            EXCEPTION("Failed to investigate file: " << file << ": "
-                      << strerror(errno));
-        return static_cast<std::size_t>(buf.st_size);
+        if (fs::exists(file) && fs::is_regular_file(file)) {
+            auto err = std::error_code{};
+            auto filesize = fs::file_size(file, err);
+
+            if (filesize == static_cast<std::uintmax_t>(-1))
+                EXCEPTION("Failed to investigate file: " << file << ": "
+                          << err);
+            return static_cast<std::size_t>(filesize);
+        }
+
+        EXCEPTION("Failed to investigate file: " << file << ": "
+                  << "Doesn't exists or isn't regular");
     }
 
     static inline std::string get_home()
