@@ -27,22 +27,22 @@
 class AuthException : public std::exception
 {
 public:
-    AuthException(const std::string& additionalInfo = "") :
+    AuthException(const std::string& additional_info = "") :
         std::exception(),
-        m_additionalInfo{additionalInfo}
+        m_additional_info{additional_info}
     {}
 
     virtual const char *what() const noexcept
     {
         std::stringstream ss;
         ss << "HTTP Authorization required";
-        if (m_additionalInfo != "")
-            ss << ": " << m_additionalInfo;
+        if (m_additional_info != "")
+            ss << ": " << m_additional_info;
         return ss.str().c_str();
     }
 
 private:
-    std::string m_additionalInfo;
+    std::string m_additional_info;
 };
 
 #endif /* _AUTH_EXCEPTION_H_ */
