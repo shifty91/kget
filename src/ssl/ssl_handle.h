@@ -84,7 +84,7 @@ public:
         SSL_set_verify(m_ssl_handle, mode, verify_callback);
     }
 
-    inline long get_verify_result() const noexcept
+    inline auto get_verify_result() const noexcept
     {
         return SSL_get_verify_result(m_ssl_handle);
     }
@@ -94,12 +94,12 @@ public:
         return m_ssl_handle;
     }
 
-    inline int read(void *buffer, int size) const noexcept
+    inline auto read(void *buffer, int size) const noexcept
     {
         return SSL_read(m_ssl_handle, buffer, size);
     }
 
-    inline int write(const void *buffer, int size) const noexcept
+    inline auto write(const void *buffer, int size) const noexcept
     {
         return SSL_write(m_ssl_handle, buffer, size);
     }
