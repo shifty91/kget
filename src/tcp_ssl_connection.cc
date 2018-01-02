@@ -55,7 +55,7 @@ void TCPSSLConnection::init_ssl(const std::string& host)
     m_ssl.ssl_new(m_ssl_ctx);
     m_ssl.set_fd(m_sock);
 
-    // verify certificate
+    // force verification of server's certificate
     if (Config::instance()->verify_peer()) {
         X509_VERIFY_PARAM *param;
         param = SSL_get0_param(m_ssl.handle());
@@ -65,6 +65,13 @@ void TCPSSLConnection::init_ssl(const std::string& host)
         m_ssl.set_verify(SSL_VERIFY_PEER, nullptr);
     }
     m_ssl.connect();
+
+    auto verified = m_ssl.get_verify_result();
+    if (verified == X509_V_OK)
+        log_dbg("Server's certificate verified.");
+    else
+        log_dbg("Server's certificate not verfified (result=" << verified << ").");
+
     log_dbg("SSL connection uses '" << m_ssl.get_cipher() << "' cipher.");
 }
 
