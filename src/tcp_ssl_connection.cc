@@ -65,6 +65,7 @@ void TCPSSLConnection::init_ssl(const std::string& host)
         m_ssl.set_verify(SSL_VERIFY_PEER, nullptr);
     }
     m_ssl.connect();
+    log_dbg("SSL connection uses '" << m_ssl.get_cipher() << "' cipher.");
 }
 
 void TCPSSLConnection::connect(const std::string& host, int port)

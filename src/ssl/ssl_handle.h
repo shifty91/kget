@@ -109,6 +109,11 @@ public:
         return SSL_get_error(m_ssl_handle, ret);
     }
 
+    inline auto get_cipher() const noexcept
+    {
+        return SSL_get_cipher(m_ssl_handle);
+    }
+
     inline std::string str_error(int ret) const
     {
         auto code = get_error(ret);
