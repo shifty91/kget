@@ -45,7 +45,7 @@ Example:
 
     $ mkdir build
     $ cd build
-    $ CC=gcc7 CXX=gcc7 cmake -DCUSTOM_RPATH="/usr/local/lib/gcc7" ..
+    $ CC=gcc7 CXX=g++7 cmake -DCUSTOM_RPATH="/usr/local/lib/gcc7" ..
     $ make -j8
     $ sudo make install
 
