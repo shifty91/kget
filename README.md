@@ -19,7 +19,7 @@ the same thing as BSD's fetch.
         --debug, -d      : enable debug output
         --help, -h       : print this help
         --version, -x    : print version information
-    get version 1.10 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
+    get version 1.11 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
 
 Supported right now:
 
@@ -58,7 +58,7 @@ Example:
 
 ## Author ##
 
-Copyright (C) 2015-2017 Kurt Kanzenbach <kurt@kmk-computers.de>
+Copyright (C) 2015-2018 Kurt Kanzenbach <kurt@kmk-computers.de>
 
 ## License ##
 
