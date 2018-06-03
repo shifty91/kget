@@ -30,13 +30,15 @@ public:
     RedirectException(const std::string& url) :
         std::exception(),
         m_url{url}
-    {}
-
-    virtual const char* what() const noexcept
     {
         std::stringstream ss;
         ss << "HTTP Redirection to the new URL: " << m_url;
-        return ss.str().c_str();
+        m_what = ss.str();
+    }
+
+    virtual const char *what() const noexcept override
+    {
+        return m_what.c_str();
     }
 
     const std::string& url() const
@@ -46,6 +48,7 @@ public:
 
 private:
     const std::string m_url;
+    std::string m_what;
 };
 
 #endif /* _REDIRECT_EXCEPTION_H_ */
