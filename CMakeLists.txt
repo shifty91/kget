@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.2)
 project(get)
 
 set(SRCS
@@ -70,11 +70,28 @@ configure_file(
   )
 include_directories("${PROJECT_BINARY_DIR}")
 
-include_directories("src" "src/ssl" "src/ssh")
+# kopt
+include(ExternalProject)
+externalproject_add(kopt
+  SOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/kopt/"
+  CMAKE_ARGS
+  -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+  -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+  -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+  -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/kopt
+  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
+add_library(kopt_lib STATIC IMPORTED)
+set_target_properties(kopt_lib PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/kopt/lib64/${CMAKE_STATIC_LIBRARY_PREFIX}kopt${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set(KOPT_INCLUDE_DIR "${CMAKE_BINARY_DIR}/kopt/include/")
+add_dependencies(kopt_lib kopt)
+
+include_directories("src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
 add_executable(get ${SRCS})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})
 target_link_libraries(get ${Backtrace_LIBRARIES})
+target_link_libraries(get kopt_lib)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   target_link_libraries(${PROJECT_NAME} stdc++fs)
 endif()

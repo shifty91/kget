@@ -1,0 +1,3 @@
+[submodule "lib/kopt"]
+	path = lib/kopt
+	url = https://github.com/shifty91/kopt
