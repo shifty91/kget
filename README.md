@@ -35,6 +35,8 @@ Example:
 
 ### Linux ###
 
+    $ git submodule init
+    $ git submodule update
     $ mkdir build
     $ cd build
     $ cmake ..
@@ -43,6 +45,8 @@ Example:
 
 ### FreeBSD ###
 
+    $ git submodule init
+    $ git submodule update
     $ mkdir build
     $ cd build
     $ CC=gcc7 CXX=g++7 cmake -DCUSTOM_RPATH="/usr/local/lib/gcc7" ..
