@@ -22,27 +22,13 @@
 #include <vector>
 #include <cstdlib>
 #include <libgen.h>
-#include <unistd.h>
-#include <getopt.h>
+
+#include <kopt/kopt.h>
 
 #include "get_config.h"
 #include "config.h"
 #include "protocol_dispatcher.h"
 #include "logger.h"
-
-static struct option long_opts[] = {
-    { "progress", no_argument,       NULL, 'p' },
-    { "follow",   no_argument,       NULL, 'f' },
-    { "verify",   no_argument,       NULL, 'v' },
-    { "sslv2",    no_argument,       NULL, '2' },
-    { "sslv3",    no_argument,       NULL, '3' },
-    { "output",   required_argument, NULL, 'o' },
-    { "debug",    no_argument,       NULL, 'd' },
-    { "version",  no_argument,       NULL, 'x' },
-    { "help",     no_argument,       NULL, 'h' },
-    { "continue", no_argument,       NULL, 'c' },
-    { NULL,       0,                 NULL,  0  },
-};
 
 [[noreturn]] static inline
 void print_usage_and_die(int die)
@@ -76,58 +62,61 @@ int main(int argc, char *argv[])
 {
     // parse args
     auto *config = Config::instance();
-    std::vector<std::string> urls;
-    std::string output;
-    int c;
+    Kopt::OptionParser parser{argc, argv};
 
     if (argc <= 1)
         print_usage_and_die(1);
 
-    while ((c = getopt_long(argc, argv, "23dvpfu:k:o:xhc", long_opts, NULL)) != -1) {
-        switch (c) {
-        case 'p':
-            config->show_pg() = true;
-            break;
-        case 'f':
-            config->follow_redirects() = false;
-            break;
-        case 'v':
-            config->verify_peer() = true;
-            break;
-        case '2':
-            config->use_sslv2() = true;
-            break;
-        case '3':
-            config->use_sslv3() = true;
-            break;
-        case 'o':
-            output = optarg;
-            break;
-        case 'c':
-            config->continue_download() = true;
-            break;
-        case 'd':
-            config->debug() = true;
-            break;
-        case 'x':
-            print_version_and_die();
-        case 'h':
-            print_usage_and_die(0);
-        default:
-            print_usage_and_die(1);
-        }
-    }
-    if (optind >= argc)
+    parser.add_flag_option("progress", "show progressbar if available", 'p');
+    parser.add_flag_option("follow", "do not follow HTTP redirects", 'f');
+    parser.add_flag_option("verify", "verify server's SSL certificate", 'v');
+    parser.add_flag_option("sslv2", "use SSL version 2", '2');
+    parser.add_flag_option("sslv3", "use SSL version 3", '3');
+    parser.add_argument_option("output", "specify output file name", 'o');
+    parser.add_flag_option("debug", "enable debug output", 'd');
+    parser.add_flag_option("version", "print version information", 'x');
+    parser.add_flag_option("help", "print this help", 'h');
+    parser.add_flag_option("continue", "continue file download", 'c');
+
+    try {
+        parser.parse();
+    } catch (const std::exception& ex) {
+        log_info("Error while parsing command line arguments: " << ex.what());
         print_usage_and_die(1);
-    for (auto i = optind; i < argc; ++i)
-        urls.emplace_back(argv[i]);
-    if (urls.size() > 1 && output.size() > 0)
+    }
+
+    // help/version?
+    if (*parser["version"])
+        print_version_and_die();
+    if (*parser["help"])
+        print_usage_and_die(0);
+
+    // configure get
+    if (*parser["progress"])
+        config->show_pg() = true;
+    if (*parser["follow"])
+        config->follow_redirects() = false;
+    if (*parser["verify"])
+        config->verify_peer() = true;
+    if (*parser["sslv2"])
+        config->use_sslv2() = true;
+    if (*parser["sslv3"])
+        config->use_sslv3() = true;
+    if (*parser["continue"])
+        config->continue_download() = true;
+    if (*parser["debug"])
+        config->debug() = true;
+
+    // urls given?
+    if (parser.unparsed_options().empty())
+        print_usage_and_die(1);
+    if (parser.unparsed_options().size() > 1 && !parser["output"]->value().empty())
         print_usage_and_die(1);
 
     // dispatch
-    for (auto&& url: urls) {
+    for (auto&& url: parser.unparsed_options()) {
         try {
-            ProtocolDispatcher dispatcher(url, output);
+            ProtocolDispatcher dispatcher(url, parser["output"]->value());
             dispatcher.dispatch();
         } catch (const std::exception&) {
             log_info("Unfortunately an error has occured :(. For more information read "
