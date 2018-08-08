@@ -71,6 +71,7 @@ configure_file(
 include_directories("${PROJECT_BINARY_DIR}")
 
 # kopt
+include(GNUInstallDirs)
 include(ExternalProject)
 externalproject_add(kopt
   SOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/kopt/"
@@ -82,7 +83,7 @@ externalproject_add(kopt
   -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/kopt
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
 add_library(kopt_lib STATIC IMPORTED)
-set_target_properties(kopt_lib PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/kopt/lib64/${CMAKE_STATIC_LIBRARY_PREFIX}kopt${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set_target_properties(kopt_lib PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/kopt/${CMAKE_INSTALL_LIBDIR}/${CMAKE_STATIC_LIBRARY_PREFIX}kopt${CMAKE_STATIC_LIBRARY_SUFFIX}")
 set(KOPT_INCLUDE_DIR "${CMAKE_BINARY_DIR}/kopt/include/")
 add_dependencies(kopt_lib kopt)
 
