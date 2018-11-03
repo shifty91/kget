@@ -31,20 +31,9 @@
 #include "logger.h"
 
 [[noreturn]] static inline
-void print_usage_and_die(int die)
+void print_usage_and_die(const Kopt::OptionParser& parser, int die)
 {
-    std::cerr << "usage: get [options] <url> [more urls]" << std::endl;
-    std::cerr << "  options:" << std::endl;
-    std::cerr << "    --progress, -p   : show progressbar if available" << std::endl;
-    std::cerr << "    --output, -o     : specify output file name" << std::endl;
-    std::cerr << "    --continue, -c   : continue file download" << std::endl;
-    std::cerr << "    --follow, -f     : do not follow HTTP redirects" << std::endl;
-    std::cerr << "    --verify, -v     : verify server's SSL certificate" << std::endl;
-    std::cerr << "    --sslv2, -2      : use SSL version 2" << std::endl;
-    std::cerr << "    --sslv3, -3      : use SSL version 3" << std::endl;
-    std::cerr << "    --debug, -d      : enable debug output" << std::endl;
-    std::cerr << "    --help, -h       : print this help" << std::endl;
-    std::cerr << "    --version, -x    : print version information" << std::endl;
+    std::cerr << parser.get_usage("<url> [more urls]");
     std::cerr << "get version " << VERSION << " (C) Kurt Kanzenbach <kurt@kmk-computers.de>"
               << std::endl;
     std::exit(die ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -64,9 +53,6 @@ int main(int argc, char *argv[])
     auto *config = Config::instance();
     Kopt::OptionParser parser{argc, argv};
 
-    if (argc <= 1)
-        print_usage_and_die(1);
-
     parser.add_flag_option("progress", "show progressbar if available", 'p');
     parser.add_flag_option("follow", "do not follow HTTP redirects", 'f');
     parser.add_flag_option("verify", "verify server's SSL certificate", 'v');
@@ -78,18 +64,21 @@ int main(int argc, char *argv[])
     parser.add_flag_option("help", "print this help", 'h');
     parser.add_flag_option("continue", "continue file download", 'c');
 
+    if (argc <= 1)
+        print_usage_and_die(parser, 1);
+
     try {
         parser.parse();
     } catch (const std::exception& ex) {
         log_info("Error while parsing command line arguments: " << ex.what());
-        print_usage_and_die(1);
+        print_usage_and_die(parser, 1);
     }
 
     // help/version?
     if (*parser["version"])
         print_version_and_die();
     if (*parser["help"])
-        print_usage_and_die(0);
+        print_usage_and_die(parser, 0);
 
     // configure get
     if (*parser["progress"])
@@ -109,9 +98,9 @@ int main(int argc, char *argv[])
 
     // urls given?
     if (parser.unparsed_options().empty())
-        print_usage_and_die(1);
+        print_usage_and_die(parser, 1);
     if (parser.unparsed_options().size() > 1 && !parser["output"]->value().empty())
-        print_usage_and_die(1);
+        print_usage_and_die(parser, 1);
 
     // dispatch
     for (auto&& url: parser.unparsed_options()) {
