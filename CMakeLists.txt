@@ -29,12 +29,14 @@ endif()
 # Set custom RPATH
 SET(CMAKE_INSTALL_RPATH "${CUSTOM_RPATH}")
 
+add_executable(get ${SRCS})
+
 # Search OpenSSL
 find_package(PkgConfig REQUIRED)
 pkg_search_module(OPENSSL openssl>=1.0.2)
 
 if (OPENSSL_FOUND)
-  include_directories(${OPENSSL_INCLUDE_DIRS})
+  target_include_directories(get PRIVATE ${OPENSSL_INCLUDE_DIRS})
   link_directories(${OPENSSL_LIBRARY_DIRS})
   message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
   set(HAVE_OPENSSL ON CACHE BOOL "Use OpenSSL")
@@ -43,7 +45,7 @@ endif()
 # libssh2
 pkg_search_module(LIBSSH2 libssh2)
 if (LIBSSH2_FOUND)
-  include_directories(${LIBSSH2_INCLUDE_DIRS})
+  target_include_directories(get PRIVATE ${LIBSSH2_INCLUDE_DIRS})
   link_directories(${LIBSSH2_LIBRARY_DIRS})
   message(STATUS "Using LibSSH2 ${LIBSSH2_VERSION}")
   set(HAVE_LIBSSH ON CACHE BOOL "Use LibSSH2")
@@ -52,7 +54,7 @@ endif()
 # search for backtrace
 find_package(Backtrace)
 if (Backtrace_FOUND)
-  include_directories(${Backtrace_INCLUDE_DIRS})
+  target_include_directories(get PRIVATE ${Backtrace_INCLUDE_DIRS})
   set(HAVE_BACKTRACE ON CACHE BOOL "Use Backtrace")
 endif()
 
@@ -68,7 +70,7 @@ configure_file(
   "${PROJECT_SOURCE_DIR}/get_config.in"
   "${PROJECT_BINARY_DIR}/get_config.h"
   )
-include_directories("${PROJECT_BINARY_DIR}")
+target_include_directories(get PRIVATE "${PROJECT_BINARY_DIR}")
 
 # kopt
 include(GNUInstallDirs)
@@ -87,8 +89,7 @@ set_target_properties(kopt_lib PROPERTIES IMPORTED_LOCATION "${CMAKE_BINARY_DIR}
 set(KOPT_INCLUDE_DIR "${CMAKE_BINARY_DIR}/kopt/include/")
 add_dependencies(kopt_lib kopt)
 
-include_directories("src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
-add_executable(get ${SRCS})
+target_include_directories(get PRIVATE "src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})
 target_link_libraries(get ${Backtrace_LIBRARIES})
