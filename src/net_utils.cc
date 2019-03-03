@@ -69,7 +69,7 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 
     res = getaddrinfo(host.c_str(), service.c_str(), &hints, &sa_head);
     if (res)
-        EXCEPTION("getaddrinfo() for host " << host << " failed: " << gai_strerror(res));
+        EXCEPTION("getaddrinfo() for host ", host, " failed: ", gai_strerror(res));
 
     // try to connect to some record...
     for (sa = sa_head; sa; sa = sa->ai_next) {
@@ -90,8 +90,8 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
     freeaddrinfo(sa_head);
 
     if (!sa)
-        EXCEPTION("connect() for host " << host << " on service " << service <<
-                  " failed: " << strerror(errno));
+        EXCEPTION("connect() for host ", host, " on service ", service,
+                  " failed: ", strerror(errno));
 
     return sock;
 }
@@ -105,5 +105,5 @@ void NetUtils::set_default_timeout(int sock)
 
     if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv,
                    sizeof(struct timeval)))
-        EXCEPTION("setsockopt() failed: " << strerror(errno));
+        EXCEPTION("setsockopt() failed: ", strerror(errno));
 }

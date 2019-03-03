@@ -93,7 +93,7 @@ void ProtocolDispatcher::dispatch()
         try {
             auto it = protoMap.find(req.method());
             if (it == protoMap.end())
-                EXCEPTION("The method " << req.method() << " is not supported right now.");
+                EXCEPTION("The method ", req.method()," is not supported right now.");
 
             it->second->get(req);
         } catch (const RedirectException& ex) {

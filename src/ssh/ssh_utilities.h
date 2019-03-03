@@ -35,7 +35,7 @@
     do {                                                            \
         char *reason;                                               \
         libssh2_session_last_error(session, &reason, nullptr, 0);   \
-        EXCEPTION(msg << ": " << reason);                           \
+        EXCEPTION(msg, ": ", reason);                               \
     } while (0)
 
 #define SFTP_EXCEPTION(session, msg)                        \
@@ -86,7 +86,7 @@
         case LIBSSH2_FX_LINK_LOOP:                          \
             reason = "Link loop"; break;                    \
         }                                                   \
-        EXCEPTION(msg << ": " << reason);                   \
+        EXCEPTION(msg, ": ", reason);                       \
     } while (0)
 
 #endif

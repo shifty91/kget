@@ -57,5 +57,5 @@ void URLParser::parse()
         return;
     }
 
-    EXCEPTION("Failed to parse url: " << m_url);
+    EXCEPTION("Failed to parse url: ", m_url);
 }

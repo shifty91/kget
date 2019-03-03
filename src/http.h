@@ -72,7 +72,7 @@ public:
             mode |= std::ios_base::app;
         std::ofstream ofs(req.out_file_name(), mode);
         if (ofs.fail())
-            EXCEPTION("Failed to open file: " << req.out_file_name());
+            EXCEPTION("Failed to open file: ", req.out_file_name());
         if (length > 0 && config->show_pg())
             tcp.read_until_eof_with_pg_to_fstream(
                 ofs, req.start_offset(), length + req.start_offset());
@@ -158,7 +158,7 @@ private:
             throw AuthException();
 
         if (code != 200 && code != 206)
-            EXCEPTION("Received unexpected response code from server: " << code);
+            EXCEPTION("Received unexpected response code from server: ", code);
 
         return code;
     }
@@ -235,7 +235,7 @@ private:
         if (auth == "")
             EXCEPTION("Failed to parse 401 HTTP response header!");
         if (auth != "Basic")
-            EXCEPTION("Unsupported HTTP auth: " << auth);
+            EXCEPTION("Unsupported HTTP auth: ", auth);
 
         log_info("HTTP Basic Authentication: ", realm);
     }

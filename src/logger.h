@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <libgen.h>
-
+#include <string.h>
 #include "config.h"
 #include "backtrace.h"
 #include "get_config.h"
@@ -36,13 +36,19 @@
     (basename(const_cast<char *>(str)))
 
 template<typename... Args>
-static inline void log_common(const std::string& level, const std::string& file,
-                              int line, Args&&... args)
+static inline std::string log_common(
+    const std::string& level, const std::string& file,
+    int line, Args&&... args)
 {
-    std::cerr << "[" << level << ": " << GET_BASENAME(file.c_str()) << ":"
-              << line << "]: ";
-    (std::cerr << ... << std::forward<Args>(args));
-    std::cerr << std::endl;
+    std::stringstream ss;
+
+    ss << "[" << level << ": " << GET_BASENAME(file.c_str()) << ":"
+       << line << "]: ";
+    (ss << ... << std::forward<Args>(args));
+    ss << std::endl;
+    std::cerr << ss.str();
+
+    return ss.str();
 }
 
 #define log_err(...)                                            \
@@ -62,26 +68,22 @@ static inline void log_common(const std::string& level, const std::string& file,
     } while (0)
 
 #ifdef HAVE_BACKTRACE
-#define EXCEPTION_TYPE(type, msg)                       \
-    do {                                                \
-        std::stringstream ss;                           \
-        ss << msg;                                      \
-        log_err(ss.str());                              \
-        if (unlikely(Config::instance()->debug()))      \
-            BackTrace().print_bt();                     \
-        throw std::type(ss.str());                      \
+#define EXCEPTION_TYPE(type, ...)                                       \
+    do {                                                                \
+        auto msg = log_common("ERROR", __FILE__, __LINE__, __VA_ARGS__); \
+        if (unlikely(Config::instance()->debug()))                      \
+            BackTrace().print_bt();                                     \
+        throw std::type(msg);                                           \
     } while (0)
 #else
-#define EXCEPTION_TYPE(type, msg)                       \
-    do {                                                \
-        std::stringstream ss;                           \
-        ss << msg;                                      \
-        log_err(ss.str());                              \
-        throw std::type(ss.str());                      \
+#define EXCEPTION_TYPE(type, ...)                                       \
+    do {                                                                \
+        auto msg = log_common("ERROR", __FILE__, __LINE__, __VA_ARGS__); \
+        throw std::type(msg);                                           \
     } while (0)
 #endif
 
-#define EXCEPTION(msg)                          \
-    EXCEPTION_TYPE(logic_error, msg)
+#define EXCEPTION(...)                          \
+    EXCEPTION_TYPE(logic_error, __VA_ARGS__)
 
 #endif /* _LOGGER_H_ */

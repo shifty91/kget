@@ -96,7 +96,7 @@ logged_in:
     }
 
     if (pasv_port < 0)
-        EXCEPTION("Failed to parse PASV port " << pasv_port);
+        EXCEPTION("Failed to parse PASV port ", pasv_port);
 
     log_dbg("PASV p0rt is ", pasv_port);
 
@@ -118,7 +118,7 @@ logged_in:
     // fetch it and save to file
     std::ofstream ofs(req.out_file_name(), mode);
     if (ofs.fail())
-        EXCEPTION("Failed to open file: " << req.out_file_name());
+        EXCEPTION("Failed to open file: ", req.out_file_name());
     if (config->show_pg())
         tcp_pasv.read_until_eof_with_pg_to_fstream(ofs, req.start_offset(), len);
     else
@@ -200,12 +200,12 @@ void FTPMethod::check_response(const std::string& line, int expected_response,
         return;
 
     if (unlikely(config->debug()))
-        EXCEPTION("Received unexpected response code from FTP server " << response
-                  << " while " << expected_response << " was expected.\n"
-                  << "  Origin of failure: " << file << ":" << src_line);
+        EXCEPTION("Received unexpected response code from FTP server ", response,
+                  " while ", expected_response, " was expected.\n",
+                  "  Origin of failure: ", file, ":", src_line);
     else
-        EXCEPTION("Received unexpected response code from FTP server " << response
-                  << " while " << expected_response << " was expected.");
+        EXCEPTION("Received unexpected response code from FTP server ", response,
+                  " while ", expected_response, " was expected.");
 }
 
 bool FTPMethod::is_reponse(const std::string& line) const

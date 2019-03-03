@@ -74,13 +74,12 @@ public:
             auto filesize = fs::file_size(file, err);
 
             if (filesize == static_cast<std::uintmax_t>(-1))
-                EXCEPTION("Failed to investigate file: " << file << ": "
-                          << err);
+                EXCEPTION("Failed to investigate file: ", file, ": ", err);
             return static_cast<std::size_t>(filesize);
         }
 
-        EXCEPTION("Failed to investigate file: " << file << ": "
-                  << "Doesn't exists or isn't regular");
+        EXCEPTION("Failed to investigate file: ", file, ": ",
+                  "Doesn't exists or isn't regular");
     }
 
     static inline std::string get_home()

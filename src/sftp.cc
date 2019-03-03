@@ -156,7 +156,7 @@ void SFTPMethod::get(const Request& req) const
     std::ofstream ofs;
     ofs.open(req.out_file_name());
     if (ofs.fail())
-        EXCEPTION("Failed to open file " << req.out_file_name());
+        EXCEPTION("Failed to open file ", req.out_file_name());
 
     while (42) {
         char buffer[4096];

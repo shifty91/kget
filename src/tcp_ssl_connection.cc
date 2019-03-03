@@ -100,7 +100,7 @@ void TCPSSLConnection::write(const std::string& to_write) const
     while (static_cast<decltype(len)>(written) < len) {
         auto tmp = m_ssl.write(start + written, len - written);
         if (tmp <= 0)
-            EXCEPTION("SSL_write() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_write() failed: ", m_ssl.str_error(tmp));
         written += tmp;
     }
 }
@@ -118,7 +118,7 @@ std::string TCPSSLConnection::read(std::size_t num_bytes) const
         auto len = std::min(sizeof(buffer), num_bytes - static_cast<int>(read));
         auto tmp = m_ssl.read(buffer, len);
         if (tmp <= 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         result.insert(read, buffer, tmp);
         read += tmp;
     }
@@ -140,7 +140,7 @@ std::string TCPSSLConnection::read_until_eof(std::size_t file_size) const
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -165,7 +165,7 @@ std::string TCPSSLConnection::read_until_eof_with_pg(std::size_t file_size) cons
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -186,7 +186,7 @@ void TCPSSLConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -204,7 +204,7 @@ void TCPSSLConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -225,7 +225,7 @@ std::string TCPSSLConnection::read_ln() const
     while (42) {
         auto tmp = m_ssl.read(buffer, sizeof(buffer));
         if (tmp < 0)
-            EXCEPTION("SSL_read() failed: " << m_ssl.str_error(tmp));
+            EXCEPTION("SSL_read() failed: ", m_ssl.str_error(tmp));
         if (tmp == 0)
             EXCEPTION("SSL_read() in read_ln() encountered EOF");
         result.insert(read, buffer, tmp);

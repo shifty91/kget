@@ -57,7 +57,7 @@ void TCPConnection::write(const std::string& to_write) const
     while (static_cast<decltype(len)>(written) < len) {
         auto tmp = ::write(m_sock, start + written, len - written);
         if (tmp == -1)
-            EXCEPTION("write() to socket failed: " << strerror(errno));
+            EXCEPTION("write() to socket failed: ", strerror(errno));
         written += tmp;
     }
 }
@@ -75,7 +75,7 @@ std::string TCPConnection::read(std::size_t num_bytes) const
         auto len = std::min(sizeof(buffer), num_bytes - static_cast<std::size_t>(read));
         auto tmp = ::read(m_sock, buffer, len);
         if (tmp < 0)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             EXCEPTION("read() encountered EOF");
         result.insert(read, buffer, tmp);
@@ -99,7 +99,7 @@ std::string TCPConnection::read_until_eof(std::size_t file_size) const
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -124,7 +124,7 @@ std::string TCPConnection::read_until_eof_with_pg(std::size_t file_size) const
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             break;
         result.insert(read, buffer, tmp);
@@ -145,7 +145,7 @@ void TCPConnection::read_until_eof_to_fstream(std::ofstream& ofs) const
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -163,7 +163,7 @@ void TCPConnection::read_until_eof_with_pg_to_fstream(std::ofstream& ofs, std::s
     while (42) {
         auto tmp = ::read(m_sock, buffer, sizeof(buffer));
         if (tmp == -1)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             break;
         ofs.write(buffer, tmp);
@@ -184,7 +184,7 @@ std::string TCPConnection::read_ln() const
     while (42) {
         auto tmp = ::read(m_sock, buffer, 1);
         if (tmp < 0)
-            EXCEPTION("read() to socket failed: " << strerror(errno));
+            EXCEPTION("read() to socket failed: ", strerror(errno));
         if (tmp == 0)
             EXCEPTION("read() in read_ln() encountered EOF");
         result.insert(read, buffer, tmp);
