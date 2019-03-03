@@ -117,7 +117,7 @@ public:
         struct winsize w;
         rc = ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
         if (rc) {
-            log_err("ioctl() for getting terminal width failed: " << strerror(rc) << ". Using 80 columns.");
+            log_err("ioctl() for getting terminal width failed: ", strerror(rc), ". Using 80 columns.");
             return 80;
         }
         return w.ws_col;

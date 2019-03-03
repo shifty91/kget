@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     try {
         parser.parse();
     } catch (const std::exception& ex) {
-        log_info("Error while parsing command line arguments: " << ex.what());
+        log_info("Error while parsing command line arguments: ", ex.what());
         print_usage_and_die(parser, 1);
     }
 

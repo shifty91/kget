@@ -65,7 +65,7 @@ public:
         response = check_response_code(header);
 
         auto length = get_content_length(header);
-        log_dbg("File has a size of " << (length + req.start_offset()) << " bytes.");
+        log_dbg("File has a size of ", length + req.start_offset()," bytes.");
 
         // save
         if (response == 206)
@@ -123,7 +123,7 @@ private:
 #endif
         }
         if (req.start_offset() > 0) {
-            log_dbg("Trying to continue file download @ " << req.start_offset() << " bytes");
+            log_dbg("Trying to continue file download @ ", req.start_offset(), " bytes");
             request << "Range: bytes=" << req.start_offset() << "-\r\n";
         }
         request << "\r\n";
@@ -237,7 +237,7 @@ private:
         if (auth != "Basic")
             EXCEPTION("Unsupported HTTP auth: " << auth);
 
-        log_info("HTTP Basic Authentication: " << realm);
+        log_info("HTTP Basic Authentication: ", realm);
     }
 };
 

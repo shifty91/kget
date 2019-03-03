@@ -99,7 +99,7 @@ void ProtocolDispatcher::dispatch()
         } catch (const RedirectException& ex) {
             if (config->follow_redirects()) {
                 const auto& url = ex.url();
-                log_info("HTTP redirect detected. Going to URL: " << url);
+                log_info("HTTP redirect detected. Going to URL: ", url);
                 m_url = url;
                 continue;
             }
@@ -112,7 +112,7 @@ void ProtocolDispatcher::dispatch()
             continue;
         }
 
-        log_info("File saved to " << req.out_file_name());
+        log_info("File saved to ", req.out_file_name());
 
         break;
     }

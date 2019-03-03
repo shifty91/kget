@@ -35,23 +35,30 @@
 #define GET_BASENAME(str)                       \
     (basename(const_cast<char *>(str)))
 
-#define log_err(msg)                                                    \
-    do {                                                                \
-        std::cerr << "[ERROR " << GET_BASENAME(__FILE__) << ":"         \
-                  << __LINE__ << "]: " << msg << std::endl;             \
+template<typename... Args>
+static inline void log_common(const std::string& level, const std::string& file,
+                              int line, Args&&... args)
+{
+    std::cerr << "[" << level << ": " << GET_BASENAME(file.c_str()) << ":"
+              << line << "]: ";
+    (std::cerr << ... << std::forward<Args>(args));
+    std::cerr << std::endl;
+}
+
+#define log_err(...)                                            \
+    do {                                                        \
+        log_common("ERROR", __FILE__, __LINE__, __VA_ARGS__);   \
     } while (0)
 
-#define log_dbg(msg)                                                    \
-    do {                                                                \
-        if (unlikely(Config::instance()->debug()))                      \
-            std::cout << "[DEBUG " << GET_BASENAME(__FILE__) << ":"     \
-                      << __LINE__ << "]: " << msg << std::endl;         \
+#define log_info(...)                                            \
+    do {                                                         \
+        log_common("INFO", __FILE__, __LINE__, __VA_ARGS__);     \
     } while (0)
 
-#define log_info(msg)                                                   \
-    do {                                                                \
-        std::cout << "[INFO " << GET_BASENAME(__FILE__) << ":"          \
-                  << __LINE__ << "]: " << msg << std::endl;             \
+#define log_dbg(...)                                              \
+    do {                                                          \
+        if (unlikely(Config::instance()->debug()))                \
+            log_common("DEBUG", __FILE__, __LINE__, __VA_ARGS__); \
     } while (0)
 
 #ifdef HAVE_BACKTRACE

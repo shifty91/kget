@@ -48,7 +48,7 @@ std::string NetUtils::get_ip(const struct addrinfo *sa)
 
     res = inet_ntop(sa->ai_family, in_addr, addr, sizeof(addr));
     if (!res) {
-        log_dbg("inet_ntop() failed: " << strerror(errno));
+        log_dbg("inet_ntop() failed: ", strerror(errno));
         return "";
     }
 
@@ -75,13 +75,13 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
     for (sa = sa_head; sa; sa = sa->ai_next) {
         sock = socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
         if (sock < 0) {
-            log_dbg("socket() failed: " << strerror(errno) <<
+            log_dbg("socket() failed: ", strerror(errno),
                     ". Trying next address.");
             continue;
         }
 
         if (!connect(sock, sa->ai_addr, sa->ai_addrlen)) {
-            log_dbg("Connected to " << host << "(" << get_ip(sa) << ") @ " << service);
+            log_dbg("Connected to ", host, "(", get_ip(sa), ") @ ", service);
             break;
         }
 

@@ -63,7 +63,7 @@ void FTPMethod::get(const Request& req) const
     CHECK_RESPONSE(tcp, 230);
 
 logged_in:
-    log_dbg("Logged into FTP server at " << req.host());
+    log_dbg("Logged into FTP server at ", req.host());
 
     // change to binary mode
     tcp << "TYPE I\r\n";
@@ -75,7 +75,7 @@ logged_in:
     response = ftp_ret_code(line);
     if (response == 213) {
         len = ftp_size(line);
-        log_dbg("File has a size of " << len << " bytes.");
+        log_dbg("File has a size of ", len, " bytes.");
     }
 
     // PASV/EPSV
@@ -98,14 +98,14 @@ logged_in:
     if (pasv_port < 0)
         EXCEPTION("Failed to parse PASV port " << pasv_port);
 
-    log_dbg("PASV p0rt is " << pasv_port);
+    log_dbg("PASV p0rt is ", pasv_port);
 
     // connect to ftp data
     tcp_pasv.connect(req.host(), pasv_port);
 
     // set start offset
     if (req.start_offset() > 0) {
-        log_dbg("Continuing file download @ " << req.start_offset() << " bytes");
+        log_dbg("Continuing file download @ ", req.start_offset(), " bytes");
         tcp << "REST " << req.start_offset() << "\r\n";
         CHECK_RESPONSE(tcp, 350);
         mode |= std::ios_base::app;

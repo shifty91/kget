@@ -70,9 +70,9 @@ void TCPSSLConnection::init_ssl(const std::string& host)
     if (verified == X509_V_OK)
         log_dbg("Server's certificate verified.");
     else
-        log_dbg("Server's certificate not verfified (result=" << verified << ").");
+        log_dbg("Server's certificate not verfified (result=", verified, ").");
 
-    log_dbg("SSL connection uses '" << m_ssl.get_cipher() << "' cipher.");
+    log_dbg("SSL connection uses '", m_ssl.get_cipher(), "' cipher.");
 }
 
 void TCPSSLConnection::connect(const std::string& host, int port)
