@@ -37,15 +37,54 @@ public:
 
 private:
     int ftp_ret_code(const std::string& response) const;
-    void check_response(const TCPConnection& tcp, int expected_response,
-                        const std::string& file = "", int line = 0) const;
-    void check_response(const std::string& line, int expected_response,
-                        const std::string& file = "", int src_line = 0) const;
+    void check_response(int expected_response, int real_response) const;
     std::size_t ftp_size(const std::string& line) const;
     int ftp_pasv_port(const std::string& line) const;
     int ftp_epsv_port(const std::string& line) const;
     std::string read_response(const TCPConnection& tcp) const;
     bool is_reponse(const std::string& line) const;
+
+    template<typename... Args>
+    void command_check(TCPConnection& tcp, int expected_response, Args&&... args) const
+    {
+        std::stringstream ss;
+
+        (ss << ... << std::forward<Args>(args));
+        log_dbg("COMMAND: ", ss.str());
+        tcp << ss.str();
+        auto line = read_response(tcp);
+        log_dbg("RESPONSE: ", line);
+        auto response = ftp_ret_code(line);
+        check_response(expected_response, response);
+    }
+
+    template<typename... Args>
+    [[nodiscard]]
+    int command_ret_code(TCPConnection& tcp, Args&&... args) const
+    {
+        std::stringstream ss;
+
+        (ss << ... << std::forward<Args>(args));
+        log_dbg("COMMAND: ", ss.str());
+        tcp << ss.str();
+        auto line = read_response(tcp);
+        log_dbg("RESPONSE: ", line);
+        return ftp_ret_code(line);
+    }
+
+    template<typename... Args>
+    [[nodiscard]]
+    std::string command_ret(TCPConnection& tcp, Args&&... args) const
+    {
+        std::stringstream ss;
+
+        (ss << ... << std::forward<Args>(args));
+        log_dbg("COMMAND: ", ss.str());
+        tcp << ss.str();
+        auto line = read_response(tcp);
+        log_dbg("RESPONSE: ", line);
+        return line;
+    }
 };
 
 #endif /* _FTP_H_ */

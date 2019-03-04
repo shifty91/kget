@@ -45,10 +45,17 @@ static inline std::string log_common(
     ss << "[" << level << ": " << GET_BASENAME(file.c_str()) << ":"
        << line << "]: ";
     (ss << ... << std::forward<Args>(args));
-    ss << std::endl;
-    std::cerr << ss.str();
 
-    return ss.str();
+    // chomp
+    auto msg = ss.str();
+    if (msg.size() > 0 && msg[msg.size() - 1] == '\n')
+        msg.pop_back();
+    if (msg.size() > 0 && msg[msg.size() - 1] == '\r')
+        msg.pop_back();
+
+    std::cerr << msg << std::endl;
+
+    return msg;
 }
 
 #define log_err(...)                                            \
