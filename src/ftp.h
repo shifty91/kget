@@ -45,7 +45,8 @@ private:
     bool is_reponse(const std::string& line) const;
 
     template<typename... Args>
-    void command_check(TCPConnection& tcp, int expected_response, Args&&... args) const
+    [[nodiscard]]
+    auto command_ret(TCPConnection& tcp, Args&&... args) const
     {
         std::stringstream ss;
 
@@ -54,36 +55,23 @@ private:
         tcp << ss.str();
         auto line = read_response(tcp);
         log_dbg("RESPONSE: ", line);
-        auto response = ftp_ret_code(line);
+
+        return line;
+    }
+
+    template<typename... Args>
+    void command_check(TCPConnection& tcp, int expected_response, Args&&... args) const
+    {
+        auto response = command_ret_code(tcp, std::forward<Args>(args)...);
         check_response(expected_response, response);
     }
 
     template<typename... Args>
     [[nodiscard]]
-    int command_ret_code(TCPConnection& tcp, Args&&... args) const
+    auto command_ret_code(TCPConnection& tcp, Args&&... args) const
     {
-        std::stringstream ss;
-
-        (ss << ... << std::forward<Args>(args));
-        log_dbg("COMMAND: ", ss.str());
-        tcp << ss.str();
-        auto line = read_response(tcp);
-        log_dbg("RESPONSE: ", line);
+        auto line = command_ret(tcp, std::forward<Args>(args)...);
         return ftp_ret_code(line);
-    }
-
-    template<typename... Args>
-    [[nodiscard]]
-    std::string command_ret(TCPConnection& tcp, Args&&... args) const
-    {
-        std::stringstream ss;
-
-        (ss << ... << std::forward<Args>(args));
-        log_dbg("COMMAND: ", ss.str());
-        tcp << ss.str();
-        auto line = read_response(tcp);
-        log_dbg("RESPONSE: ", line);
-        return line;
     }
 };
 
