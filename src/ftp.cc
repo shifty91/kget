@@ -169,19 +169,15 @@ int FTPMethod::ftp_epsv_port(const std::string& line) const
 
 int FTPMethod::ftp_ret_code(const std::string& response) const
 {
-    char a, b, c;
+    std::regex pattern("(\\d{3})\\s+(.*)\\r\\n");
+    std::smatch match;
 
-    if (response.size() < 3)
-        EXCEPTION("Received garbage from FTP server.");
+    if (std::regex_match(response, match, pattern)) {
+        std::string p(match[1]);
+        return std::atoi(p.c_str());
+    }
 
-    a = response[0];
-    b = response[1];
-    c = response[2];
-
-    if (!std::isdigit(a) || !std::isdigit(b) || !std::isdigit(c))
-        EXCEPTION("Received garbage from FTP server.");
-
-    return (a-'0')*100 + (b-'0')*10 + (c-'0');
+    EXCEPTION("Received garbage from FTP server.");
 }
 
 void FTPMethod::check_response(int expected_response, int real_response) const
