@@ -156,10 +156,13 @@ int FTPMethod::ftp_pasv_port(const std::string& line) const
 
 int FTPMethod::ftp_epsv_port(const std::string& line) const
 {
-    // grr, stupid c++ regex, using c style parsing instead
-    for (decltype(line.size()) i = 0; i < line.size(); ++i)
-        if (!strncmp(line.c_str() + i, "|||", 3))
-            return std::atoi(line.c_str() + i + 3);
+    std::regex pattern(".*\\(\\|\\|\\|(\\d+)\\|\\).*\\r\\n");
+    std::smatch match;
+
+    if (std::regex_match(line, match, pattern)) {
+        std::string p(match[1]);
+        return std::atoi(p.c_str());
+    }
 
     EXCEPTION("Failed to parse EPSV port.");
 }
