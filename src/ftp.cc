@@ -102,8 +102,7 @@ logged_in:
     // set start offset
     if (req.start_offset() > 0) {
         log_dbg("Continuing file download @ ", req.start_offset(), " bytes");
-        response = command_ret_code(tcp, "REST ", req.start_offset(), "\r\n");
-        check_response(350, response);
+        command_check(tcp, 350, "REST ", req.start_offset(), "\r\n");
         mode |= std::ios_base::app;
     }
 
