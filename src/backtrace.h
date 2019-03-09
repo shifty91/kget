@@ -22,11 +22,16 @@
 
 #include "get_config.h"
 
-#ifdef HAVE_BACKTRACE
+#ifdef HAVE_LIBUNWIND
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <cstddef>
-#include <execinfo.h>
+#include <cxxabi.h>
+
+#define UNW_LOCAL_ONLY
+#include <libunwind.h>
 
 /**
  * This class can be used to determine the stacktrace of the current execution.
@@ -35,38 +40,48 @@ class BackTrace
 {
 public:
     inline BackTrace() noexcept
-    {
-        m_size    = backtrace(m_array, MAX_STACK_SIZE);
-        m_strings = backtrace_symbols(m_array, m_size);
-    }
-
-    BackTrace(const BackTrace& other) = delete;
-    BackTrace(BackTrace&& other) = delete;
-    BackTrace& operator=(const BackTrace& other) = delete;
-    BackTrace& operator=(BackTrace&& other) = delete;
+    {}
 
     inline ~BackTrace() noexcept
-    {
-        if (m_strings)
-            free(m_strings);
-    }
+    {}
 
     inline void print_bt() const noexcept
     {
-        if (m_size == 0 || !m_strings)
+        std::stringstream ss;
+        unw_cursor_t cursor; unw_context_t uc;
+
+        auto ret = unw_getcontext(&uc);
+        if (ret)
+            return;
+        ret = unw_init_local(&cursor, &uc);
+        if (ret)
             return;
 
+        while (unw_step(&cursor) > 0) {
+            unw_word_t ip, offset;
+            char symbol_name[1024];
+            int status;
+
+            ret = unw_get_reg(&cursor, UNW_REG_IP, &ip);
+            if (ret)
+                return;
+            ret = unw_get_proc_name(&cursor, symbol_name, sizeof(symbol_name), &offset);
+            if (ret)
+                return;
+
+            auto *demangled = abi::__cxa_demangle(symbol_name, nullptr, nullptr, &status);
+            auto *symbol = status == 0 ? demangled : symbol_name;
+
+            ss << "  " << symbol << "+0x" << std::hex << offset
+               << " [0x" << std::hex << ip << "]" << std::endl;
+
+            if (demangled)
+                std::free(demangled);
+        }
+
         std::cout << "Stacktrace:" << std::endl;
-        for (std::size_t i = 0; i < m_size; ++i)
-            std::cout << "  " << m_strings[i] << std::endl;
+        std::cout << ss.str();
     }
-
-private:
-    static constexpr std::size_t MAX_STACK_SIZE = 64;
-
-    std::size_t m_size;
-    void *m_array[MAX_STACK_SIZE];
-    char **m_strings;
 };
 
 #endif

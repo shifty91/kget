@@ -3,7 +3,7 @@
 
 #cmakedefine HAVE_OPENSSL @HAVE_OPENSSL@
 #cmakedefine HAVE_LIBSSH @HAVE_LIBSSH@
-#cmakedefine HAVE_BACKTRACE @HAVE_BACKTRACE@
+#cmakedefine HAVE_LIBUNWIND @HAVE_LIBUNWIND@
 #define VERSION "${VERSION}"
 
 #endif /* _GET_CONFIG_H_ */

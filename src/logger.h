@@ -74,7 +74,7 @@ static inline std::string log_common(
             log_common("DEBUG", __FILE__, __LINE__, __VA_ARGS__); \
     } while (0)
 
-#ifdef HAVE_BACKTRACE
+#ifdef HAVE_LIBUNWIND
 #define EXCEPTION_TYPE(type, ...)                                       \
     do {                                                                \
         auto msg = log_common("ERROR", __FILE__, __LINE__, __VA_ARGS__); \

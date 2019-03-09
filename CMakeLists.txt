@@ -51,11 +51,13 @@ if (LIBSSH2_FOUND)
   set(HAVE_LIBSSH ON CACHE BOOL "Use LibSSH2")
 endif()
 
-# search for backtrace
-find_package(Backtrace)
-if (Backtrace_FOUND)
-  target_include_directories(get PRIVATE ${Backtrace_INCLUDE_DIRS})
-  set(HAVE_BACKTRACE ON CACHE BOOL "Use Backtrace")
+# search for libunwind
+pkg_search_module(LIBUNWIND libunwind)
+if (LIBUNWIND_FOUND)
+  target_include_directories(get PRIVATE ${LIBUNWIND_INCLUDE_DIRS})
+  link_directories(${LIBUNWIND_LIBRARY_DIRS})
+  message(STATUS "Using Libunwind ${LIBUNWIND_VERSION}")
+  set(HAVE_LIBUNWIND ON CACHE BOOL "Use Libunwind")
 endif()
 
 # Termios.h
@@ -92,7 +94,7 @@ add_dependencies(kopt_lib kopt)
 target_include_directories(get PRIVATE "src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
 target_link_libraries(get ${OPENSSL_LIBRARIES})
 target_link_libraries(get ${LIBSSH2_LIBRARIES})
-target_link_libraries(get ${Backtrace_LIBRARIES})
+target_link_libraries(get ${LIBUNWIND_LIBRARIES})
 target_link_libraries(get kopt_lib)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   target_link_libraries(${PROJECT_NAME} stdc++fs)
