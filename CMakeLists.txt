@@ -16,7 +16,6 @@ set(SRCS
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pedantic -Wall -march=native")
-set(CMAKE_BUILD_TYPE "Release")
 set(VERSION "1.12")
 
 # check for C++17
