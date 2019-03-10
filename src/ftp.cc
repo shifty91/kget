@@ -26,6 +26,7 @@
 
 #include "ftp.h"
 #include "logger.h"
+#include "utils.h"
 #include "config.h"
 
 void FTPMethod::get(const Request& req) const
@@ -33,7 +34,7 @@ void FTPMethod::get(const Request& req) const
     using namespace std::string_literals;
 
     TCPConnection tcp, tcp_pasv;
-    int pasv_port;
+    std::uint16_t pasv_port;
     std::size_t len = 0;
     std::ios_base::openmode mode = std::ios_base::out;
     Config *config = Config::instance();
@@ -86,9 +87,6 @@ logged_in:
         EXCEPTION("FTP server doesn't support PASV nor EPSV. Giving up.");
     }
 
-    if (pasv_port < 0)
-        EXCEPTION("Failed to parse PASV port ", pasv_port);
-
     log_dbg("PASV p0rt is ", pasv_port);
 
     // connect to ftp data
@@ -129,33 +127,34 @@ std::size_t FTPMethod::ftp_size(const std::string& line) const
 
     if (std::regex_match(line, match, pattern)) {
         std::string size(match[1]);
-        return std::atoll(size.c_str());
+        return Utils::str2to<std::size_t>(size);
     }
 
     EXCEPTION("Failed to parse size of requested file.");
 }
 
-int FTPMethod::ftp_pasv_port(const std::string& line) const
+std::uint16_t FTPMethod::ftp_pasv_port(const std::string& line) const
 {
     std::regex pattern("\\d+[\\w ]+\\(\\d+,\\d+,\\d+,\\d+,(\\d+),(\\d+)\\).*\\r\\n");
     std::smatch match;
 
     if (std::regex_match(line, match, pattern)) {
         std::string p1(match[1]), p2(match[2]);
-        return std::atoi(p1.c_str()) * 256 + std::atoi(p2.c_str());
+        return Utils::str2to<std::uint16_t>(p1) * 256 +
+            Utils::str2to<std::uint16_t>(p2);
     }
 
     EXCEPTION("Failed to parse PASV port.");
 }
 
-int FTPMethod::ftp_epsv_port(const std::string& line) const
+std::uint16_t FTPMethod::ftp_epsv_port(const std::string& line) const
 {
     std::regex pattern(".*\\(\\|\\|\\|(\\d+)\\|\\).*\\r\\n");
     std::smatch match;
 
     if (std::regex_match(line, match, pattern)) {
         std::string p(match[1]);
-        return std::atoi(p.c_str());
+        return Utils::str2to<std::uint16_t>(p);
     }
 
     EXCEPTION("Failed to parse EPSV port.");
@@ -168,7 +167,7 @@ int FTPMethod::ftp_ret_code(const std::string& response) const
 
     if (std::regex_match(response, match, pattern)) {
         std::string p(match[1]);
-        return std::atoi(p.c_str());
+        return Utils::str2to<int>(p);
     }
 
     EXCEPTION("Received garbage from FTP server.");

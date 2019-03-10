@@ -20,6 +20,8 @@
 #ifndef _FTP_H_
 #define _FTP_H_
 
+#include <cstdint>
+
 #include "method.h"
 #include "tcp_connection.h"
 
@@ -39,8 +41,8 @@ private:
     int ftp_ret_code(const std::string& response) const;
     void check_response(int expected_response, int real_response) const;
     std::size_t ftp_size(const std::string& line) const;
-    int ftp_pasv_port(const std::string& line) const;
-    int ftp_epsv_port(const std::string& line) const;
+    std::uint16_t ftp_pasv_port(const std::string& line) const;
+    std::uint16_t ftp_epsv_port(const std::string& line) const;
     std::string read_response(const TCPConnection& tcp) const;
     bool is_reponse(const std::string& line) const;
 

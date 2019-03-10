@@ -24,6 +24,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <fstream>
+#include <sstream>
+#include <type_traits>
 #include <experimental/filesystem>
 #include <sys/ioctl.h>
 #include <unistd.h>
@@ -108,6 +110,21 @@ public:
             EXCEPTION("Failed to get user input.");
         show_stdin_keystrokes();
         return input;
+    }
+
+    template<typename T>
+    static inline T str2to(const std::string& str)
+    {
+        static_assert(std::is_arithmetic_v<T>,
+                      "Str can only be converted to arithmetic type!");
+
+        std::stringstream ss{str};
+        T val;
+
+        if (!(ss >> val))
+            EXCEPTION("Failed to convert ", str);
+
+        return val;
     }
 
     static inline unsigned terminal_width()
