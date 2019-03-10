@@ -15,7 +15,7 @@ set(SRCS
   src/net_utils.cc
 )
 
-set(VERSION "1.12")
+set(VERSION "1.13")
 
 # check for C++17
 include(CheckCXXCompilerFlag)
