@@ -31,30 +31,33 @@ SET(CMAKE_INSTALL_RPATH "${CUSTOM_RPATH}")
 
 add_executable(get ${SRCS})
 
-# Search OpenSSL
 find_package(PkgConfig REQUIRED)
-pkg_search_module(OPENSSL openssl>=1.0.2)
 
+# Search OpenSSL
+pkg_search_module(OPENSSL openssl>=1.0.2)
 if (OPENSSL_FOUND)
   target_include_directories(get PRIVATE ${OPENSSL_INCLUDE_DIRS})
+  target_link_libraries(get ${OPENSSL_LIBRARIES})
   link_directories(${OPENSSL_LIBRARY_DIRS})
   message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
   set(HAVE_OPENSSL ON CACHE BOOL "Use OpenSSL")
 endif()
 
-# libssh2
+# Search libssh2
 pkg_search_module(LIBSSH2 libssh2)
 if (LIBSSH2_FOUND)
   target_include_directories(get PRIVATE ${LIBSSH2_INCLUDE_DIRS})
+  target_link_libraries(get ${LIBSSH2_LIBRARIES})
   link_directories(${LIBSSH2_LIBRARY_DIRS})
   message(STATUS "Using LibSSH2 ${LIBSSH2_VERSION}")
   set(HAVE_LIBSSH ON CACHE BOOL "Use LibSSH2")
 endif()
 
-# search for libunwind
+# Search for libunwind
 pkg_search_module(LIBUNWIND libunwind)
 if (LIBUNWIND_FOUND)
   target_include_directories(get PRIVATE ${LIBUNWIND_INCLUDE_DIRS})
+  target_link_libraries(get ${LIBUNWIND_LIBRARIES})
   link_directories(${LIBUNWIND_LIBRARY_DIRS})
   message(STATUS "Using Libunwind ${LIBUNWIND_VERSION}")
   set(HAVE_LIBUNWIND ON CACHE BOOL "Use Libunwind")
@@ -92,9 +95,6 @@ set(KOPT_INCLUDE_DIR "${CMAKE_BINARY_DIR}/kopt/include/")
 add_dependencies(kopt_lib kopt)
 
 target_include_directories(get PRIVATE "src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
-target_link_libraries(get ${OPENSSL_LIBRARIES})
-target_link_libraries(get ${LIBSSH2_LIBRARIES})
-target_link_libraries(get ${LIBUNWIND_LIBRARIES})
 target_link_libraries(get kopt_lib)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   target_link_libraries(${PROJECT_NAME} stdc++fs)
