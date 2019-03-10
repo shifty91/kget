@@ -50,19 +50,16 @@ public:
     virtual void get(const Request& req) const override
     {
         CONNECTION tcp;
-        std::string request;
-        std::vector<std::string> header;
         std::ios_base::openmode mode = std::ios_base::out;
         Config *config = Config::instance();
-        int response;
 
         tcp.connect(req.host(), get_port());
-        request = build_http_request(req);
+        auto request = build_http_request(req);
 
         tcp << request;
 
-        header = read_http_header(tcp);
-        response = check_response_code(header);
+        auto header = read_http_header(tcp);
+        auto response = check_response_code(header);
 
         auto length = get_content_length(header);
         log_dbg("File has a size of ", length + req.start_offset()," bytes.");
