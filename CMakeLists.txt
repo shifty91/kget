@@ -15,7 +15,6 @@ set(SRCS
   src/net_utils.cc
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pedantic -Wall -march=native")
 set(VERSION "1.12")
 
 # check for C++17
@@ -26,9 +25,13 @@ if (NOT HAVE_CPP17)
 endif()
 
 # Set custom RPATH
-SET(CMAKE_INSTALL_RPATH "${CUSTOM_RPATH}")
+set(CMAKE_INSTALL_RPATH "${CUSTOM_RPATH}")
 
+# Add binary
 add_executable(get ${SRCS})
+
+# Setup compile options
+target_compile_options(get PUBLIC -std=c++17 -pedantic -Wall -march=native)
 
 find_package(PkgConfig REQUIRED)
 
