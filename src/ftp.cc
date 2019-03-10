@@ -30,8 +30,9 @@
 
 void FTPMethod::get(const Request& req) const
 {
+    using namespace std::string_literals;
+
     TCPConnection tcp, tcp_pasv;
-    std::string user_name, pass;
     int pasv_port;
     std::size_t len = 0;
     std::ios_base::openmode mode = std::ios_base::out;
@@ -43,22 +44,16 @@ void FTPMethod::get(const Request& req) const
     auto response = ftp_ret_code(line);
     check_response(220, response);
 
-    // user
-    if (req.user() == "")
-        user_name = "anonymous";
-    else
-        user_name = req.user();
+    // user/pass
+    auto user_name = req.user() == "" ? "anonymous"s : req.user();
+    auto pass = req.pw() == "" ? "asdf"s : req.pw();
 
+    // login
     response = command_ret_code(tcp, "USER ", user_name, "\r\n");
     if (response == 230)
         goto logged_in;
 
-    // password
     check_response(331, response);
-    if (req.pw() == "")
-        pass = "asdf";
-    else
-        pass = req.pw();
     command_check(tcp, 230, "PASS ", pass, "\r\n");
 
 logged_in:
