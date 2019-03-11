@@ -31,6 +31,7 @@
 
 #include "get_config.h"
 #include "logger.h"
+#include "utils.h"
 #include "method.h"
 #include "tcp_connection.h"
 #include "tcp_ssl_connection.h"
@@ -62,7 +63,7 @@ public:
         auto response = check_response_code(header);
 
         auto length = get_content_length(header);
-        log_dbg("File has a size of ", length + req.start_offset()," bytes.");
+        log_dbg("File has a size of ", length + req.start_offset(), " bytes.");
 
         // save
         if (response == 206)
@@ -130,19 +131,16 @@ private:
 
     int check_response_code(const std::vector<std::string>& header) const
     {
-        int code;
         auto&& first_line = header[0];
         std::regex pattern("HTTP/(\\d+\\.\\d+)\\s*(\\d+).*\\r\\n");
         std::smatch match;
-        std::string code_str;
 
         std::regex_match(first_line, match, pattern);
 
         if (match.size() != 3)
             EXCEPTION("Received malformed HTTP Header!");
 
-        code_str = match[2];
-        code = std::atoi(code_str.c_str());
+        auto code = Utils::str2to<int>(match.str(2));
         if (code == 404)
             EXCEPTION("The requested object cannot be found on the server!");
 
@@ -182,10 +180,8 @@ private:
             std::regex pattern("Content-Length:\\s*(\\d+)\\s*\\r\\n");
             std::smatch match;
 
-            if (std::regex_match(line, match, pattern)) {
-                std::string str = match[1];
-                return std::atoll(str.c_str());
-            }
+            if (std::regex_match(line, match, pattern))
+                return Utils::str2to<std::size_t>(match.str(1));
         }
 
         log_dbg("Cannot find content length in HTTP response header.");
