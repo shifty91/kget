@@ -191,22 +191,15 @@ private:
 
     std::string http_get_redirect_url(const std::vector<std::string>& header) const
     {
-        std::string url = "";
-
         for (auto&& line : header) {
             std::regex pattern("Location:\\s*(.*)\\r\\n");
             std::smatch match;
 
-            if (std::regex_match(line, match, pattern)) {
-                url = match[1];
-                break;
-            }
+            if (std::regex_match(line, match, pattern))
+                return match.str(1);
         }
 
-        if (url == "")
-            EXCEPTION("Failed to parse 301 HTTP response header!");
-
-        return url;
+        EXCEPTION("Failed to parse 301 HTTP response header!");
     }
 
     void http_check_auth(const std::vector<std::string>& header) const
