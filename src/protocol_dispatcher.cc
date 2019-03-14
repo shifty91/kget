@@ -17,7 +17,7 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libgen.h>
+#include <experimental/filesystem>
 
 #include "get_config.h"
 #include "tcp_connection.h"
@@ -52,6 +52,8 @@ void ProtocolDispatcher::init()
 
 Request ProtocolDispatcher::build_request() const
 {
+    namespace fs = std::experimental::filesystem;
+
     URLParser parser(m_url);
     std::string name;
     std::size_t start_offset = 0;
@@ -59,7 +61,7 @@ Request ProtocolDispatcher::build_request() const
     parser.parse();
 
     if (m_output == "") {
-        name = GET_BASENAME(parser.object().c_str());
+        name = fs::path(parser.object()).filename();
         if (name == "")
             EXCEPTION("URL does not have a valid object.");
     } else

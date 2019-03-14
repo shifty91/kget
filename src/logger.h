@@ -25,6 +25,8 @@
 #include <sstream>
 #include <libgen.h>
 #include <string.h>
+#include <experimental/filesystem>
+
 #include "config.h"
 #include "backtrace.h"
 #include "get_config.h"
@@ -32,17 +34,16 @@
 #define likely(x)   __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
-#define GET_BASENAME(str)                       \
-    (basename(const_cast<char *>(str)))
-
 template<typename... Args>
 static inline std::string log_common(
     const std::string& level, const std::string& file,
     int line, Args&&... args)
 {
+    namespace fs = std::experimental::filesystem;
+
     std::stringstream ss;
 
-    ss << "[" << level << ": " << GET_BASENAME(file.c_str()) << ":"
+    ss << "[" << level << ": " << std::string(fs::path(file).filename()) << ":"
        << line << "]: ";
     (ss << ... << std::forward<Args>(args));
 
