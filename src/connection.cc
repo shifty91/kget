@@ -17,15 +17,19 @@
  * along with Get.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string>
 #include <cstring>
 #include <unistd.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
+#include "connection.h"
 #include "logger.h"
-#include "net_utils.h"
 
-std::string NetUtils::get_ip(const struct addrinfo *sa)
+std::string Connection::get_ip(const struct addrinfo *sa)
 {
     char addr[INET6_ADDRSTRLEN + 1];
     const char *res = NULL;
@@ -55,11 +59,11 @@ std::string NetUtils::get_ip(const struct addrinfo *sa)
     return addr;
 }
 
-int NetUtils::tcp_connect(const std::string& host, const std::string& service)
+void Connection::tcp_connect(const std::string& host, const std::string& service)
 {
     struct addrinfo *sa_head, *sa, hints;
     auto *config = Config::instance();
-    int res, sock;
+    int res;
 
     std::memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
@@ -73,37 +77,35 @@ int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 
     // try to connect to some record...
     for (sa = sa_head; sa; sa = sa->ai_next) {
-        sock = socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
-        if (sock < 0) {
+        m_sock = ::socket(sa->ai_family, sa->ai_socktype, sa->ai_protocol);
+        if (m_sock < 0) {
             log_dbg("socket() failed: ", strerror(errno),
                     ". Trying next address.");
             continue;
         }
 
-        if (!connect(sock, sa->ai_addr, sa->ai_addrlen)) {
+        if (!::connect(m_sock, sa->ai_addr, sa->ai_addrlen)) {
             log_dbg("Connected to ", host, "(", get_ip(sa), ") @ ", service);
             break;
         }
 
-        close(sock);
+        ::close(m_sock);
     }
     freeaddrinfo(sa_head);
 
     if (!sa)
         EXCEPTION("connect() for host ", host, " on service ", service,
                   " failed: ", strerror(errno));
-
-    return sock;
 }
 
-void NetUtils::set_default_timeout(int sock)
+void Connection::set_default_timeout()
 {
     struct timeval tv;
 
     tv.tv_sec = 30;
     tv.tv_usec = 0;
 
-    if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &tv,
+    if (setsockopt(m_sock, SOL_SOCKET, SO_RCVTIMEO, &tv,
                    sizeof(struct timeval)))
         EXCEPTION("setsockopt() failed: ", strerror(errno));
 }

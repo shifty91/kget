@@ -82,6 +82,10 @@ protected:
     // Buffer size for read(2) used in TCP connections
     static const std::size_t BUFFER_SIZE = 4096;
 
+    std::string get_ip(const struct addrinfo *sa);
+    void tcp_connect(const std::string& host, const std::string& service);
+    void set_default_timeout();
+
     int m_sock;
     bool m_connected;
 };

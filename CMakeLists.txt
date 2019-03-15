@@ -12,7 +12,7 @@ set(SRCS
   src/base64.cc
   src/protocol_dispatcher.cc
   src/config.cc
-  src/net_utils.cc
+  src/connection.cc
 )
 
 set(VERSION "1.13")

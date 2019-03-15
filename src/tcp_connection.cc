@@ -21,7 +21,6 @@
 
 #include "logger.h"
 #include "progress_bar.h"
-#include "net_utils.h"
 
 #include <cstring>
 #include <stdexcept>
@@ -40,8 +39,8 @@ void TCPConnection::connect(const std::string& host, int port)
 void TCPConnection::connect(const std::string& host, const std::string& service)
 {
     close();
-    m_sock = NetUtils::tcp_connect(host, service);
-    NetUtils::set_default_timeout(m_sock);
+    tcp_connect(host, service);
+    set_default_timeout();
     m_connected = true;
 }
 
