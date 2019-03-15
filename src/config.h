@@ -105,12 +105,33 @@ public:
         return m_continue;
     }
 
+    inline const bool& use_ipv4_only() const noexcept
+    {
+        return m_ipv4;
+    }
+
+    inline bool& use_ipv4_only() noexcept
+    {
+        return m_ipv4;
+    }
+
+    inline const bool& use_ipv6_only() const noexcept
+    {
+        return m_ipv6;
+    }
+
+    inline bool& use_ipv6_only() noexcept
+    {
+        return m_ipv6;
+    }
+
 private:
     static Config *m_instance;
 
     Config() :
         m_show_pg{false}, m_follow_redirects{true}, m_verify_peer{false},
-        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}, m_continue{false}
+        m_use_sslv2{false}, m_use_sslv3{false}, m_debug{false}, m_continue{false},
+        m_ipv4{false}, m_ipv6{false}
     {}
 
     bool m_show_pg;
@@ -120,6 +141,8 @@ private:
     bool m_use_sslv3;
     bool m_debug;
     bool m_continue;
+    bool m_ipv4;
+    bool m_ipv6;
 };
 
 #endif /* _CONFIG_H_ */

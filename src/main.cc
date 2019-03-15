@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
     parser.add_flag_option("verify", "verify server's SSL certificate", 'v');
     parser.add_flag_option("sslv2", "use SSL version 2", '2');
     parser.add_flag_option("sslv3", "use SSL version 3", '3');
+    parser.add_flag_option("ipv4", "Use IPv4 only", '4');
+    parser.add_flag_option("ipv6", "use IPv6 only", '6');
     parser.add_argument_option("output", "specify output file name", 'o');
     parser.add_flag_option("debug", "enable debug output", 'd');
     parser.add_flag_option("version", "print version information", 'x');
@@ -95,6 +97,14 @@ int main(int argc, char *argv[])
         config->continue_download() = true;
     if (*parser["debug"])
         config->debug() = true;
+    if (*parser["ipv4"])
+        config->use_ipv4_only() = true;
+    if (*parser["ipv6"])
+        config->use_ipv6_only() = true;
+
+    // sanity checks
+    if (config->use_ipv4_only() && config->use_ipv6_only())
+        print_usage_and_die(parser, 1);
 
     // urls given?
     if (parser.unparsed_options().empty())

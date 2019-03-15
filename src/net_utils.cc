@@ -57,14 +57,14 @@ std::string NetUtils::get_ip(const struct addrinfo *sa)
 
 int NetUtils::tcp_connect(const std::string& host, const std::string& service)
 {
-    int res;
-    int sock;
     struct addrinfo *sa_head, *sa, hints;
+    auto *config = Config::instance();
+    int res, sock;
 
     std::memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
-    // prefer IPv6
-    hints.ai_family = PF_UNSPEC;
+    hints.ai_family = config->use_ipv4_only() ? AF_INET :
+        config->use_ipv6_only() ? AF_INET6 : AF_UNSPEC;
     hints.ai_flags  = AI_ADDRCONFIG;
 
     res = getaddrinfo(host.c_str(), service.c_str(), &hints, &sa_head);
