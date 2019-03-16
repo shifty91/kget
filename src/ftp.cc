@@ -125,10 +125,8 @@ std::size_t FTPMethod::ftp_size(const std::string& line) const
     std::regex pattern("\\d+\\s*(\\d+)\\r\\n");
     std::smatch match;
 
-    if (std::regex_match(line, match, pattern)) {
-        std::string size(match[1]);
-        return Utils::str2to<std::size_t>(size);
-    }
+    if (std::regex_match(line, match, pattern))
+        return Utils::str2to<std::size_t>(match.str(1));
 
     EXCEPTION("Failed to parse size of requested file.");
 }
@@ -138,11 +136,9 @@ std::uint16_t FTPMethod::ftp_pasv_port(const std::string& line) const
     std::regex pattern("\\d+[\\w ]+\\(\\d+,\\d+,\\d+,\\d+,(\\d+),(\\d+)\\).*\\r\\n");
     std::smatch match;
 
-    if (std::regex_match(line, match, pattern)) {
-        std::string p1(match[1]), p2(match[2]);
-        return Utils::str2to<std::uint16_t>(p1) * 256 +
-            Utils::str2to<std::uint16_t>(p2);
-    }
+    if (std::regex_match(line, match, pattern))
+        return Utils::str2to<std::uint16_t>(match.str(1)) * 256 +
+            Utils::str2to<std::uint16_t>(match.str(2));
 
     EXCEPTION("Failed to parse PASV port.");
 }
@@ -152,10 +148,8 @@ std::uint16_t FTPMethod::ftp_epsv_port(const std::string& line) const
     std::regex pattern(".*\\(\\|\\|\\|(\\d+)\\|\\).*\\r\\n");
     std::smatch match;
 
-    if (std::regex_match(line, match, pattern)) {
-        std::string p(match[1]);
-        return Utils::str2to<std::uint16_t>(p);
-    }
+    if (std::regex_match(line, match, pattern))
+        return Utils::str2to<std::uint16_t>(match.str(1));
 
     EXCEPTION("Failed to parse EPSV port.");
 }
@@ -165,10 +159,8 @@ int FTPMethod::ftp_ret_code(const std::string& response) const
     std::regex pattern("(\\d{3})\\s+(.*)\\r\\n");
     std::smatch match;
 
-    if (std::regex_match(response, match, pattern)) {
-        std::string p(match[1]);
-        return Utils::str2to<int>(p);
-    }
+    if (std::regex_match(response, match, pattern))
+        return Utils::str2to<int>(match.str(1));
 
     EXCEPTION("Received garbage from FTP server.");
 }
