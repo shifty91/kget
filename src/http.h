@@ -46,7 +46,14 @@ class HTTPMethod : public Method
 public:
     HTTPMethod() :
         Method()
-    {}
+    {
+        static_assert(std::is_same_v<CONNECTION, TCPConnection>
+#ifdef HAVE_OPENSSL
+                      || std::is_same_v<CONNECTION, TCPSSLConnection>
+#endif
+                      , "HTTPMethod may only be used in combination with "
+                      "TCPConnection or TCPSSLConnection");
+    }
 
     virtual void get(const Request& req) const override
     {
@@ -81,17 +88,10 @@ public:
 private:
     constexpr auto get_port() const noexcept
     {
-        static_assert(std::is_same_v<CONNECTION, TCPConnection>
-#ifdef HAVE_OPENSSL
-                      || std::is_same_v<CONNECTION, TCPSSLConnection>
-#endif
-                      , "HTTPMethod may only be used in combination with "
-                      "TCPConnection or TCPSSLConnection");
-
         if constexpr (std::is_same_v<CONNECTION, TCPConnection>)
-            return 80;
+            return "http";
         else
-            return 443;
+            return "https";
     }
 
     std::string build_http_request(const Request& req) const
