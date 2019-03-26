@@ -12,6 +12,8 @@ the same thing as BSD's fetch.
       --debug, -d:    enable debug output
       --follow, -f:   do not follow HTTP redirects
       --help, -h:     print this help
+      --ipv4, -4:     Use IPv4 only
+      --ipv6, -6:     use IPv6 only
       --output, -o:   specify output file name
       --progress, -p: show progressbar if available
       --sslv2, -2:    use SSL version 2
@@ -22,7 +24,7 @@ the same thing as BSD's fetch.
 
 Supported right now:
 
-- HTTP, HTTPS, FTP and SFTP
+- HTTP, HTTPS, FTP, FTPS and SFTP
 - IPv4 and IPv6 (v6 is preferred in DNS lookups)
 - HTTP Basic Auth
 
@@ -55,7 +57,7 @@ Example:
 ## Dependencies ##
 
 - Modern Compiler with CPP 17 Support (e.g. gcc >= 7 or clang >= 5)
-- OpenSSL (optional, used for HTTPS)
+- OpenSSL (optional, used for HTTPS and FTPS)
 - LibSSH2 (optional, used for SFTP)
 - Libunwind (optional, used for generating backtraces)
 - termios
