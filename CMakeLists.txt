@@ -6,7 +6,6 @@ set(SRCS
   src/tcp_connection.cc
   src/tcp_ssl_connection.cc
   src/url_parser.cc
-  src/ftp.cc
   src/sftp.cc
   src/progress_bar.cc
   src/base64.cc

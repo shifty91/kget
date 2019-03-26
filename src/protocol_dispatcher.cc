@@ -43,7 +43,10 @@ void ProtocolDispatcher::init()
 #ifdef HAVE_OPENSSL
     protoMap.emplace("https", std::make_unique<HTTPMethod<TCPSSLConnection> >());
 #endif
-    protoMap.emplace("ftp",   std::make_unique<FTPMethod>());
+    protoMap.emplace("ftp",   std::make_unique<FTPMethod<> >());
+#ifdef HAVE_OPENSSL
+    protoMap.emplace("ftps",  std::make_unique<FTPMethod<TCPSSLConnection> >());
+#endif
 #ifdef HAVE_LIBSSH
     protoMap.emplace("sftp",  std::make_unique<SFTPMethod>());
 #endif
