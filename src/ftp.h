@@ -87,7 +87,7 @@ public:
         log_dbg("Logged into FTP server at ", req.host());
 
         // configure to use encrypted data transfer as well
-        if constexpr (std::is_same_v<CONNECTION, TCPSSLConnection>) {
+        if constexpr (!std::is_same_v<CONNECTION, TCPConnection>) {
             command_check(tcp, 200, "PBSZ 0\r\n");
             command_check(tcp, 200, "PROT P\r\n");
         }
