@@ -14,7 +14,7 @@ set(SRCS
   src/connection.cc
 )
 
-set(VERSION "1.13")
+set(VERSION "1.14")
 
 # check for C++17
 include(CheckCXXCompilerFlag)
