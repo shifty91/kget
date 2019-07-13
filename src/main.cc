@@ -53,18 +53,18 @@ int main(int argc, char *argv[])
     auto *config = Config::instance();
     Kopt::OptionParser parser{argc, argv};
 
-    parser.add_flag_option("progress", "show progressbar if available", 'p');
-    parser.add_flag_option("follow", "do not follow HTTP redirects", 'f');
-    parser.add_flag_option("verify", "verify server's SSL certificate", 'v');
-    parser.add_flag_option("sslv2", "use SSL version 2", '2');
-    parser.add_flag_option("sslv3", "use SSL version 3", '3');
+    parser.add_flag_option("progress", "Show progressbar if available", 'p');
+    parser.add_flag_option("follow", "Do not follow HTTP redirects", 'f');
+    parser.add_flag_option("verify", "Verify server's SSL certificate", 'v');
+    parser.add_flag_option("sslv2", "Use SSL version 2", '2');
+    parser.add_flag_option("sslv3", "Use SSL version 3", '3');
     parser.add_flag_option("ipv4", "Use IPv4 only", '4');
-    parser.add_flag_option("ipv6", "use IPv6 only", '6');
-    parser.add_argument_option("output", "specify output file name", 'o');
-    parser.add_flag_option("debug", "enable debug output", 'd');
-    parser.add_flag_option("version", "print version information", 'x');
-    parser.add_flag_option("help", "print this help", 'h');
-    parser.add_flag_option("continue", "continue file download", 'c');
+    parser.add_flag_option("ipv6", "Use IPv6 only", '6');
+    parser.add_argument_option("output", "Specify output file name", 'o');
+    parser.add_flag_option("debug", "Enable debug output", 'd');
+    parser.add_flag_option("version", "Print version information", 'x');
+    parser.add_flag_option("help", "Print this help", 'h');
+    parser.add_flag_option("continue", "Continue file download", 'c');
 
     if (argc <= 1)
         print_usage_and_die(parser, 1);
