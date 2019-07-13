@@ -8,19 +8,19 @@ the same thing as BSD's fetch.
 ## Usage ##
 
     usage: get [options] <url> [more urls]
-      --continue, -c: continue file download
-      --debug, -d:    enable debug output
-      --follow, -f:   do not follow HTTP redirects
-      --help, -h:     print this help
+      --continue, -c: Continue file download
+      --debug, -d:    Enable debug output
+      --follow, -f:   Do not follow HTTP redirects
+      --help, -h:     Print this help
       --ipv4, -4:     Use IPv4 only
-      --ipv6, -6:     use IPv6 only
-      --output, -o:   specify output file name
-      --progress, -p: show progressbar if available
-      --sslv2, -2:    use SSL version 2
-      --sslv3, -3:    use SSL version 3
-      --verify, -v:   verify server's SSL certificate
-      --version, -x:  print version information
-    get version 1.13 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
+      --ipv6, -6:     Use IPv6 only
+      --output, -o:   Specify output file name
+      --progress, -p: Show progressbar if available
+      --sslv2, -2:    Use SSL version 2
+      --sslv3, -3:    Use SSL version 3
+      --verify, -v:   Verify server's SSL certificate
+      --version, -x:  Print version information
+    get version 1.14 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
 
 Supported right now:
 
