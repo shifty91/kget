@@ -192,7 +192,7 @@ private:
     std::string http_get_redirect_url(const std::vector<std::string>& header) const
     {
         for (auto&& line : header) {
-            std::regex pattern("Location:\\s*(.*)\\r\\n");
+            std::regex pattern("Location:\\s*(.*)\\r\\n", std::regex_constants::icase);
             std::smatch match;
 
             if (std::regex_match(line, match, pattern))
