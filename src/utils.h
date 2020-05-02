@@ -26,7 +26,7 @@
 #include <fstream>
 #include <sstream>
 #include <type_traits>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <cstring>
@@ -62,18 +62,14 @@ public:
 
     static inline bool file_exists(const std::string& file)
     {
-        namespace fs = std::experimental::filesystem;
-
-        return fs::exists(file);
+        return std::filesystem::exists(file);
     }
 
     static inline std::size_t file_size(const std::string& file)
     {
-        namespace fs = std::experimental::filesystem;
-
-        if (fs::exists(file) && fs::is_regular_file(file)) {
+        if (std::filesystem::exists(file) && std::filesystem::is_regular_file(file)) {
             auto err = std::error_code{};
-            auto filesize = fs::file_size(file, err);
+            auto filesize = std::filesystem::file_size(file, err);
 
             if (filesize == static_cast<std::uintmax_t>(-1))
                 EXCEPTION("Failed to investigate file: ", file, ": ", err);

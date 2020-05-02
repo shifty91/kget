@@ -25,7 +25,7 @@
 #include <sstream>
 #include <libgen.h>
 #include <string.h>
-#include <experimental/filesystem>
+#include <filesystem>
 
 #include "config.h"
 #include "backtrace.h"
@@ -39,11 +39,9 @@ static inline std::string log_common(
     const std::string& level, const std::string& file,
     int line, Args&&... args)
 {
-    namespace fs = std::experimental::filesystem;
-
     std::stringstream ss;
 
-    ss << "[" << level << ": " << std::string(fs::path(file).filename()) << ":"
+    ss << "[" << level << ": " << std::string(std::filesystem::path(file).filename()) << ":"
        << line << "]: ";
     (ss << ... << std::forward<Args>(args));
 
