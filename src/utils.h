@@ -62,12 +62,16 @@ public:
 
     static inline bool file_exists(const std::string& file)
     {
-        return std::filesystem::exists(file);
+        try {
+            return std::filesystem::exists(file);
+        } catch (const std::exception&) {
+            return false;
+        }
     }
 
     static inline std::size_t file_size(const std::string& file)
     {
-        if (std::filesystem::exists(file) && std::filesystem::is_regular_file(file)) {
+        if (file_exists(file) && std::filesystem::is_regular_file(file)) {
             auto err = std::error_code{};
             auto filesize = std::filesystem::file_size(file, err);
 
