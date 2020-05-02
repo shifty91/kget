@@ -97,7 +97,4 @@ add_dependencies(kopt_lib kopt)
 
 target_include_directories(get PRIVATE "src" "src/ssl" "src/ssh" ${KOPT_INCLUDE_DIR})
 target_link_libraries(get kopt_lib)
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  target_link_libraries(${PROJECT_NAME} stdc++fs)
-endif()
 install(TARGETS get DESTINATION bin COMPONENT binaries)
