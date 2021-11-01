@@ -63,6 +63,7 @@ void TCPSSLConnection::init_ssl(const std::string& host)
         X509_VERIFY_PARAM_set1_host(param, host.c_str(), 0);
         m_ssl.set_verify(SSL_VERIFY_PEER, nullptr);
     }
+    m_ssl.set_tlsext_host_name(host);
     m_ssl.connect();
 
     auto verified = m_ssl.get_verify_result();

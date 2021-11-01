@@ -78,6 +78,12 @@ public:
             GET_SSL_EXCEPTION("SSL_set_fd() failed.");
     }
 
+    inline void set_tlsext_host_name(const std::string& hostname) const
+    {
+        if (!SSL_set_tlsext_host_name(m_ssl_handle, hostname.c_str()))
+            GET_SSL_EXCEPTION("SSL_set_tlsext_host_name() failed.");
+    }
+
     inline void
     set_verify(int mode, int (*verify_callback)(int, X509_STORE_CTX *)) const noexcept
     {
