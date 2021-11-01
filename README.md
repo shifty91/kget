@@ -64,7 +64,7 @@ Example:
 
 ## Author ##
 
-Copyright (C) 2015-2020 Kurt Kanzenbach <kurt@kmk-computers.de>
+Copyright (C) 2015-2021 Kurt Kanzenbach <kurt@kmk-computers.de>
 
 ## License ##
 
