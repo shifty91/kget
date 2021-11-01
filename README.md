@@ -20,7 +20,7 @@ the same thing as BSD's fetch.
       --sslv3, -3:    Use SSL version 3
       --verify, -v:   Verify server's SSL certificate
       --version, -x:  Print version information
-    get version 1.14 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
+    get version 1.15 (C) Kurt Kanzenbach <kurt@kmk-computers.de>
 
 Supported right now:
 
