@@ -61,11 +61,10 @@ std::string Connection::get_ip(const struct addrinfo *sa)
 
 void Connection::tcp_connect(const std::string& host, const std::string& service)
 {
-    struct addrinfo *sa_head, *sa, hints;
+    struct addrinfo *sa_head, *sa, hints = { 0 };
     auto *config = Config::instance();
     int res;
 
-    std::memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_family = config->use_ipv4_only() ? AF_INET :
         config->use_ipv6_only() ? AF_INET6 : AF_UNSPEC;
